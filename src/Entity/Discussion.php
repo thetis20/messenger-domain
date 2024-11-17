@@ -11,7 +11,7 @@ class Discussion
     private Uuid $id;
     /** @var string */
     private string $name;
-    /** @var array<User> */
+    /** @var array<UserInterface> */
     private array $members;
 
     public static function fromCreation(CreateDiscussionRequest $request): self
@@ -45,7 +45,7 @@ class Discussion
         return $this->members;
     }
 
-    public function isMember(User $author): bool
+    public function isMember(UserInterface $author): bool
     {
         foreach ($this->members as $member) {
             if ($member->getId() === $author->getId()) {

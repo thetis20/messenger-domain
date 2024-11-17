@@ -1,10 +1,11 @@
 <?php
 
-namespace Messenger\Domain\Entity;
+namespace Messenger\Domain\TestsIntegration\Entity;
 
+use Messenger\Domain\Entity\UserInterface;
 use Symfony\Component\Uid\Uuid;
 
-class User
+class User implements UserInterface
 {
     /** @var Uuid */
     private Uuid $id;

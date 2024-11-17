@@ -2,8 +2,8 @@
 
 namespace Messenger\Domain\TestsIntegration\Adapter\Repository;
 
+use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\Entity\Discussion;
-use Messenger\Domain\Entity\User;
 use Symfony\Component\Uid\Uuid;
 
 class Data
