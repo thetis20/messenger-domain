@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
+if (PHP_VERSION_ID >= 80000) {
+    require dirname(__DIR__) . '/vendor/phpunit/phpunit/phpunit';
+} else {
+    define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__) . '/vendor/autoload.php');
+    require PHPUNIT_COMPOSER_INSTALL;
+    PHPUnit\TextUI\Command::main();
+}
