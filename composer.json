@@ -1,50 +1,46 @@
 {
-    "name": "thetis20/messenger-domain",
-    "type": "project",
-    "license": "MIT",
-    "description": "domain of messenger application",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
-    "require": {
-        "php": ">=8.3.12",
-        "ext-ctype": "*",
-        "ext-iconv": "*",
-        "beberlei/assert": "^3.3",
-        "phpdocumentor/reflection-docblock": "^5.4",
-        "phpstan/phpdoc-parser": "^1.33",
-        "symfony/dotenv": "^7.1",
-        "symfony/uid": "^7.1"
+  "name": "thetis20/messenger-domain",
+  "type": "library",
+  "license": "MIT",
+  "description": "domain of messenger application",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=8.3.12",
+    "ext-ctype": "*",
+    "ext-iconv": "*",
+    "beberlei/assert": "^3.3",
+    "phpdocumentor/reflection-docblock": "^5.4",
+    "phpstan/phpdoc-parser": "^1.33",
+    "symfony/dotenv": "^7.1",
+    "symfony/uid": "^7.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "symfony/flex": true,
+      "symfony/runtime": true
     },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "sort-packages": true
-    },
-    "autoload": {
-        "psr-4": {
-            "Messenger\\Domain\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Messenger\\Domain\\Tests\\": "tests/",
-            "Messenger\\Domain\\TestsIntegration\\": "tests-integration/"
-        }
-    },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*",
-        "symfony/polyfill-php82": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.5"
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "Messenger\\Domain\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Messenger\\Domain\\Tests\\": "tests/",
+      "Messenger\\Domain\\TestsIntegration\\": "tests-integration/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Arnaud Picard",
+      "email": "arnaud.picard@lilo.org"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  }
 }
