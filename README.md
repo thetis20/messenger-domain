@@ -47,36 +47,22 @@ Hexagonal Architecture, or Ports and Adapters Architecture, separates the core a
 
 ## Installation and Usage
 
-This project is designed to run in a Dockerized environment. Follow these steps to install and run the application:
+This project composer
 
 1. Clone the repository:
    ```bash
-   git clone git@github.com:arnaud-factoryz/messenger.git
-   cd messenger
+   git clone git@github.com:thetis20/messenger-domain.git
+   cd messenger-domain
    ```
 
-2. Build the Docker image:
+2. Install composer dependencies:
    ```bash
-   make build
+   composer install
    ```
 
-3. Install dependencies with Composer:
+3. Run tests
    ```bash
-   make install
-   ```
-
-4. Run unit tests:
-   ```bash
-   make test
-   ```
-
-5. Run a custom command: To execute a specific command inside the container, use:
-   ```bash
-   make exec CMD="<your_command>"
-   ```
-   Example:
-   ```bash
-   make exec CMD="php bin/phpunit"
+   composer run-script tests
    ```
 
 ## Use Cases

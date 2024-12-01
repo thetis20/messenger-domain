@@ -1,9 +1,0 @@
-services:
-  php:
-    build:
-      context: .
-    restart: unless-stopped
-    environment:
-      XDEBUG_MODE: coverage
-    volumes:
-      - ./:/app
