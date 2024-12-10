@@ -11,23 +11,19 @@ class Discussion
     private Uuid $id;
     /** @var string */
     private string $name;
-    /** @var array<UserInterface> */
-    private array $members;
+    /** @var DiscussionMember[] */
+    private array $discussionMembers;
 
-    public static function fromCreation(CreateDiscussionRequest $request): self
-    {
-        return new self(
-            Uuid::v4(),
-            $request->getName(),
-            $request->getUsers()
-        );
-    }
-
-    public function __construct(Uuid $id, string $name, array $members)
+    /**
+     * @param Uuid $id
+     * @param string $name
+     * @param DiscussionMember[] $discussionMembers
+     */
+    public function __construct(Uuid $id, string $name, array $discussionMembers = [])
     {
         $this->id = $id;
         $this->name = $name;
-        $this->members = $members;
+        $this->discussionMembers = $discussionMembers;
     }
 
     public function getId(): Uuid
@@ -40,18 +36,61 @@ class Discussion
         return $this->name;
     }
 
-    public function getMembers(): array
+    /**
+     * @return DiscussionMember[]
+     */
+    public function getDiscussionMembers(): array
     {
-        return $this->members;
+        return $this->discussionMembers;
     }
 
-    public function isMember(UserInterface $author): bool
+    public function isMember(string $email): bool
     {
-        foreach ($this->members as $member) {
-            if ($member->getId() === $author->getId()) {
-                return true;
+        return (bool)$this->findDiscussionMemberByEmail($email);
+    }
+
+    public function findDiscussionMemberByEmail(string $email): ?DiscussionMember
+    {
+        foreach ($this->discussionMembers as $discussionMembers) {
+            if ($discussionMembers->getMember()->getEmail() === $email) {
+                return $discussionMembers;
             }
         }
-        return false;
+        return null;
+    }
+
+    public function addMember(Member $member, bool $seen = false): void
+    {
+        if ($this->isMember($member->getEmail())) {
+            return;
+        }
+        $discussionMember = new DiscussionMember($this, $member, $seen);
+        $this->discussionMembers[] = $discussionMember;
+    }
+
+    /**
+     * @param string[]|null $emails if null it marks all member as unseen
+     * @return void
+     */
+    public function markAsUnseen(?array $emails = null): void
+    {
+        foreach ($this->getDiscussionMembers() as $discussionMember) {
+            if ($emails === null || in_array($discussionMember->getMember()->getEmail(), $emails)) {
+                $discussionMember->markAsUnseen();
+            }
+        }
+    }
+
+    /**
+     * @param string[]|null $emails if null it marks all member as seen
+     * @return void
+     */
+    public function markAsSeen(?array $emails = null): void
+    {
+        foreach ($this->getDiscussionMembers() as $discussionMember) {
+            if ($emails === null || in_array($discussionMember->getMember()->getEmail(), $emails)) {
+                $discussionMember->markAsSeen();
+            }
+        }
     }
 }

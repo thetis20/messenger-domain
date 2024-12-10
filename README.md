@@ -73,9 +73,12 @@ A user can create a group and add other participants to it.
 ```mermaid
 flowchart TD
     A[User] --> B[Enter group name]
-    B --> C[Add members]
+    B --> G{Member already exists}
+    G --> |yes| C[Add members to the discussion]
+    G --> |no| H[Create member]
+    H --> C
     C --> D[Create group]
-    D --> E[Display group in the list]
+    D --> E[Notify users]
 ```
 
 ### Sending Messages

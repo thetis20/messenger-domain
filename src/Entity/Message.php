@@ -9,8 +9,8 @@ class Message
 {
     /** @var Uuid */
     private Uuid $id;
-    /** @var UserInterface  */
-    private UserInterface $author;
+    /** @var Member  */
+    private Member $author;
     /** @var string  */
     private string $message;
 
@@ -23,7 +23,7 @@ class Message
         );
     }
 
-    public function __construct(Uuid $id, string $message, UserInterface $author)
+    public function __construct(Uuid $id, string $message, Member $author)
     {
         $this->id = $id;
         $this->message = $message;
@@ -35,7 +35,7 @@ class Message
         return $this->id;
     }
 
-    public function getAuthor(): UserInterface
+    public function getAuthor(): Member
     {
         return $this->author;
     }

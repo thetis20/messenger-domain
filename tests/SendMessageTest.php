@@ -7,6 +7,7 @@ use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Presenter\SendMessagePresenterInterface;
 use Messenger\Domain\Request\SendMessageRequest;
 use Messenger\Domain\Response\SendMessageResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Presenter\SendMessagePresenterTest;
 use Messenger\Domain\UseCase\SendMessage;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MessageRepository;
@@ -16,29 +17,22 @@ use PHPUnit\Framework\TestCase;
 
 class SendMessageTest extends TestCase
 {
-    private SendMessagePresenterInterface $presenter;
+    private SendMessagePresenterTest $presenter;
     private UserRepository $userGateway;
     private DiscussionRepository $discussionGateway;
     private SendMessage $useCase;
 
     protected function setUp(): void
     {
-        $this->presenter = new class() implements SendMessagePresenterInterface {
-            public SendMessageResponse $response;
-
-            public function present(SendMessageResponse $response): void
-            {
-                $this->response = $response;
-            }
-        };
+        $this->presenter = new SendMessagePresenterTest();
         $this->userGateway = new UserRepository();
         $this->discussionGateway = new DiscussionRepository();
-        $this->useCase = new SendMessage(new MessageRepository());
+        $this->useCase = new SendMessage(new MessageRepository(), $this->discussionGateway);
     }
 
     public function testSuccessful(): void
     {
-        $messageContent ="message content";
+        $messageContent = "message content";
         $username = 'username';
         $discussionId = '3feb781c-8a9d-4650-8390-99aaa60efcba';
         $request = SendMessageRequest::create(

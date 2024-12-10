@@ -32,4 +32,15 @@ class DiscussionRepository implements DiscussionGateway
         }
         return null;
     }
+
+    public function update(Discussion $discussion): void
+    {
+        $discussions = Data::getInstance()->getDiscussions();
+        foreach ($discussions as $key=>$d) {
+            if ($d->getId()->toString() === $discussion->getId()->toString()) {
+                $discussions[$key] = $discussion;
+            }
+        }
+        Data::getInstance()->setDiscussions($discussions);
+    }
 }
