@@ -3,23 +3,51 @@
 namespace Messenger\Domain\UseCase;
 
 use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\DiscussionMember;
+use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Gateway\DiscussionGateway;
+use Messenger\Domain\Gateway\MemberGateway;
 use Messenger\Domain\Presenter\CreateDiscussionPresenterInterface;
 use Messenger\Domain\Request\CreateDiscussionRequest;
 use Messenger\Domain\Response\CreateDiscussionResponse;
+use Symfony\Component\Uid\Uuid;
 
 class CreateDiscussion
 {
     private DiscussionGateway $discussionGateway;
+    private MemberGateway $memberGateway;
 
-    public function __construct(DiscussionGateway $discussionGateway)
+    public function __construct(
+        DiscussionGateway $discussionGateway,
+        MemberGateway     $memberGateway)
     {
         $this->discussionGateway = $discussionGateway;
+        $this->memberGateway = $memberGateway;
     }
 
     public function execute(CreateDiscussionRequest $request, CreateDiscussionPresenterInterface $presenter): void
     {
-        $discussion = Discussion::fromCreation($request);
+        $discussion = new Discussion(Uuid::v4(), $request->getName());
+
+        $authorMember = $this->memberGateway->findOneByEmail($request->getAuthor()->getUserIdentifier());
+        if (!$authorMember) {
+            $authorMember = new Member(
+                $request->getAuthor()->getEmail(),
+                $request->getAuthor()->getUserIdentifier(),
+                $request->getAuthor()->getUsualName());
+            $this->memberGateway->insert($authorMember);
+        }
+        $discussion->addMember($authorMember);
+
+        foreach ($request->getEmails() as $ref) {
+            $member = $this->memberGateway->findOneByEmail($ref);
+            if (!$member) {
+                $member = new Member($ref);
+                $this->memberGateway->insert($member);
+            }
+            $discussion->addMember($member);
+        }
+
         $this->discussionGateway->insert($discussion);
         $presenter->present(new CreateDiscussionResponse($discussion));
     }

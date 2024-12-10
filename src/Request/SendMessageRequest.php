@@ -2,28 +2,43 @@
 
 namespace Messenger\Domain\Request;
 
+use Assert\AssertionFailedException;
 use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
+use Messenger\Domain\Exception\CreateDiscussionForbiddenException;
 use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
 use Messenger\Domain\Entity\UserInterface;
 use Assert\Assertion;
+use Messenger\Domain\Exception\SendMessageForbiddenException;
 
 class SendMessageRequest
 {
     private string $message;
-    private UserInterface $author;
+    private Member $author;
     private Discussion $discussion;
 
-    public static function create(string $message, Discussion $discussion,  UserInterface $author): SendMessageRequest
+    /**
+     * @throws AssertionFailedException
+     * @throws NotAMemberOfTheDiscussionException
+     * @throws SendMessageForbiddenException
+     */
+    public static function create(string $message, Discussion $discussion, UserInterface $author): SendMessageRequest
     {
+        if (!in_array('ROLE_USER', $author->getRoles())) {
+            throw new SendMessageForbiddenException($author, $discussion);
+        }
 
-        Assertion::notBlank($message);
-        if (!$discussion->isMember($author)) {
+        $discussionMember = $discussion->findDiscussionMemberByEmail($author->getEmail());
+        if (!$discussionMember) {
             throw new NotAMemberOfTheDiscussionException();
         }
-        return new SendMessageRequest($message, $author, $discussion);
+
+        Assertion::notBlank($message);
+
+        return new SendMessageRequest($message, $discussionMember->getMember(), $discussion);
     }
 
-    public function __construct(string $message, UserInterface $author, Discussion $discussion)
+    public function __construct(string $message, Member $author, Discussion $discussion)
     {
         $this->message = $message;
         $this->author = $author;
@@ -35,7 +50,7 @@ class SendMessageRequest
         return $this->message;
     }
 
-    public function getAuthor(): UserInterface
+    public function getAuthor(): Member
     {
         return $this->author;
     }

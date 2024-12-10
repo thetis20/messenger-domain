@@ -5,9 +5,9 @@ namespace Messenger\Domain\Exception;
 use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException;
 
-class NotAMemberOfTheDiscussionException extends InvalidArgumentException implements AssertionFailedException
+final class NotAMemberOfTheDiscussionException extends \Exception
 {
-    public const CODE = 6000;
+    public const int CODE = 6000;
 
     public function __construct()
     {

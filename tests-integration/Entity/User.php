@@ -7,21 +7,15 @@ use Symfony\Component\Uid\Uuid;
 
 class User implements UserInterface
 {
-    /** @var Uuid */
-    private Uuid $id;
     /** @var string */
     private string $email;
     /** @var string */
     private string $username;
-    /** @var string */
-    private string $password;
 
-    public function __construct(Uuid $id, string $email, string $username, string $password)
+    public function __construct(string $email, string $username)
     {
-        $this->id = $id;
         $this->email = $email;
         $this->username = $username;
-        $this->password = $password;
     }
 
     /**
@@ -40,16 +34,18 @@ class User implements UserInterface
         return $this->username;
     }
 
-    /**
-     * @return string
-     */
-    public function getPassword(): string
+    public function getUserIdentifier(): string
     {
-        return $this->password;
+        return $this->email;
     }
 
-    public function getId(): Uuid
+    public function getRoles(): array
     {
-        return $this->id;
+        return ['ROLE_USER'];
+    }
+
+    public function getUsualName(): string
+    {
+        return $this->username;
     }
 }

@@ -41,9 +41,12 @@
     }
   ],
   "require-dev": {
+    "phpstan/phpstan": "^2.0",
     "phpunit/phpunit": "^9.5"
   },
   "scripts": {
+    "phpstan": "vendor/bin/phpstan analyse src tests tests-integration --level 6",
+    "test": "phpunit",
     "tests": "phpunit"
   }
 }
