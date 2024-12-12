@@ -19,7 +19,7 @@ jobs:
       - name: Composer Init
         uses: php-actions/composer@v6
         with:
-          php_version: "8.2"
+          php_version: "8.3"
           php_extensions: soap intl gd
 
       - name: Generate Coverage report
