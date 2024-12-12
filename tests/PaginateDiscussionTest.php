@@ -60,9 +60,9 @@ class PaginateDiscussionTest extends TestCase
 
     public function provideSuccessfulValidationRequestsData(): \Generator
     {
-        yield ['username1', 10, 1, 10, 10, 1, false, false, null, null];
-        yield ['username1', 3, 1, 3, 10, 4, true, false, 2, null];
-        yield ['username1', 3, 3, 3, 10, 4, true, true, 4, 2];
-        yield ['username1', 3, 4, 1, 10, 4, false, true, null, 3];
+        yield ['username2', 10, 1, 10, 10, 1, false, false, null, null];
+        yield ['username2', 3, 1, 3, 10, 4, true, false, 2, null];
+        yield ['username2', 3, 3, 3, 10, 4, true, true, 4, 2];
+        yield ['username2', 3, 4, 1, 10, 4, false, true, null, 3];
     }
 }
