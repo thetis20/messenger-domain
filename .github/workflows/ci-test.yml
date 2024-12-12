@@ -32,7 +32,7 @@ jobs:
       - name: PHPStan
         uses: php-actions/phpstan@v3
         with:
-          command: phpstan analyse --configuration=phpstan.neon --memory-limit=1024M --error-format=md --no-progress >> 'Static Analysis.md'
+          args: '--error-format=md'
 
       - name: Wiki checkout
         uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
       - name: Push
         run: |
           mv coverage.md wiki
-          mv 'Static Analysis.md' wiki
+          mv output.md wiki
           cd wiki
           ls -la
           git config user.name actions-runner
