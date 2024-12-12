@@ -31,36 +31,8 @@ jobs:
         env:
           XDEBUG_MODE: coverage
 
-      - name: test
-        run: |
-          ls -la
-          cat output.log
-
       - name: PHPStan
         uses: php-actions/phpstan@v3
         with:
           path: 'tests tests-integration'
           args: '--error-format=github'
-
-      - name: test
-        run: |
-          ls -la
-          cat output.log
-
-      - name: Wiki checkout
-        uses: actions/checkout@v4
-        with:
-          repository: ${{github.repository}}.wiki
-          path: 'wiki'
-
-      - name: Push
-        run: |
-          mv coverage.md wiki
-          mv output.log wiki/'Static Analysis.md'
-          cd wiki
-          ls -la
-          git config user.name actions-runner
-          git config user.email actions-runner@github.com
-          git add .
-          git commit -m "Add Coverage and Analysis files" 
-          git push
