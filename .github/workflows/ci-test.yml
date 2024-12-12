@@ -43,7 +43,7 @@ jobs:
       - name: Push
         run: |
           mv coverage.md wiki
-          mv output.md wiki
+          mv output.log wiki/'Static Analysis.md'
           cd wiki
           ls -la
           git config user.name actions-runner
