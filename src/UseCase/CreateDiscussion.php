@@ -29,7 +29,7 @@ class CreateDiscussion
     {
         $discussion = new Discussion(Uuid::v4(), $request->getName());
 
-        $authorMember = $this->memberGateway->findOneByEmail($request->getAuthor()->getUserIdentifier());
+        $authorMember = $this->memberGateway->findOneByEmail($request->getAuthor()->getEmail());
         if (!$authorMember) {
             $authorMember = new Member(
                 $request->getAuthor()->getEmail(),
