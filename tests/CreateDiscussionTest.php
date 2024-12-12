@@ -4,7 +4,6 @@ namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Exception\CreateDiscussionForbiddenException;
-use Messenger\Domain\Presenter\CreateDiscussionPresenterInterface;
 use Messenger\Domain\Request\CreateDiscussionRequest;
 use Messenger\Domain\Response\CreateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\CreateDiscussionPresenterTest;
@@ -65,7 +64,7 @@ class CreateDiscussionTest extends TestCase
         CreateDiscussionRequest::create($name, $members, $currentUser);
     }
 
-    public function provideFailedValidationRequestsData(): \Generator
+    static public function provideFailedValidationRequestsData(): \Generator
     {
         yield ["", ['username1@email.com'], 'username'];
         yield ["name", [], 'username'];
