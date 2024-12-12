@@ -28,10 +28,11 @@ jobs:
           php_extensions: soap intl gd
 
       - name: PHPUnit
-        run: |
-          ./vendor/bin/phpunit --stop-on-failure --coverage-text=coverage.md
-        env:
-          XDEBUG_MODE: coverage
+        uses: php-actions/phpunit@v3
+        with:
+          php_version: "8.3"
+          coverage_text: coverage.md
+          args: ['--stop-on-failure']
 
       - name: PHPStan Analysis
         run: |
