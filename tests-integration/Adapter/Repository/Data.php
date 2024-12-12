@@ -2,7 +2,6 @@
 
 namespace Messenger\Domain\TestsIntegration\Adapter\Repository;
 
-use Messenger\Domain\Entity\DiscussionMember;
 use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\TestsIntegration\Entity\User;
@@ -12,13 +11,13 @@ use Symfony\Component\Uid\Uuid;
 final class Data
 {
     private static Data $instance;
-    /** @var Discussion[]  */
+    /** @var Discussion[] */
     private array $discussions;
-    /** @var User[]  */
+    /** @var User[] */
     private array $users;
-    /** @var Message[]  */
+    /** @var Message[] */
     private array $messages;
-    /** @var Member[]  */
+    /** @var Member[] */
     private array $members;
 
     public static function getInstance(): Data
@@ -32,30 +31,28 @@ final class Data
 
     public function __construct()
     {
-        $this->users = [
-            new User(
-                'username@email.com',
-                'username'),
-            new User(
-                'username1@email.com',
-                'username1')
-        ];
-        $this->members = [
-            new Member(
-                'username@email.com',
-                'username',
-                'username'),
-            new Member(
-                'username1@email.com',
-                'username1',
-                'username1'),
-        ];
-        $this->discussions = [new Discussion(
-            new Uuid('3feb781c-8a9d-4650-8390-99aaa60efcba'),
-            'discussion 1'
-        )];
-        $this->discussions[0]->addMember($this->members[0]);
-        $this->discussions[0]->addMember($this->members[1]);
+        $this->users = [new User('username@email.com', 'username')];
+        for ($i = 1; $i <= 10; $i++) {
+            $this->users[] = new User("username$i@email.com", "username$i");
+        }
+        $this->members = [new Member('username@email.com', 'username', 'username')];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $this->members[] = new Member("username$i@email.com", "username$i", "username$i");
+        }
+        $this->discussions = [];
+
+        for ($i = 1; $i <= 10; $i++) {
+            for ($y = 1; $y <= 10; $y++) {
+                if ($i > $y) {
+                    continue;
+                }
+                $discussion = new Discussion(Uuid::v4(), "discussion $i/$y");
+                $discussion->addMember($this->members[$i]);
+                $discussion->addMember($this->members[$y]);
+                $this->discussions[] = $discussion;
+            }
+        }
         $this->messages = [];
     }
 
