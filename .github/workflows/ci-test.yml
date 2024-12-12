@@ -32,7 +32,7 @@ jobs:
         with:
           php_version: "8.3"
           coverage_text: coverage.md
-          args: ['--stop-on-failure']
+          args: '--stop-on-failure'
 
       - name: PHPStan Analysis
         run: |
