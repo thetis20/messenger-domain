@@ -1,10 +1,5 @@
 name: PHPStan Analysis and PHPUnit Coverage Report
-on:
-  push:
-    branches: [ "master" ]
-    paths:
-      - '.github/reporting.yml'
-      - '**.php'
+on: [push, pull_request]
 permissions:
   contents: write
 jobs:
