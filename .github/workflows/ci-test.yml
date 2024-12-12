@@ -28,6 +28,8 @@ jobs:
           php_version: "8.3"
           coverage_text: coverage.md
           args: '--stop-on-failure'
+        env:
+          XDEBUG_MODE: coverage
 
       - name: PHPStan
         uses: php-actions/phpstan@v3
