@@ -2,6 +2,7 @@ name: PHPStan Analysis and PHPUnit Coverage Report
 on: [push, pull_request]
 permissions:
   contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +23,12 @@ jobs:
           php_version: "8.3"
           php_extensions: soap intl gd
 
+      - name: PHPUnit
+        run: |
+          ./vendor/bin/phpunit --stop-on-failure --coverage-php=coverage.php
+        env:
+          XDEBUG_MODE: coverage
+
       - name: Generate Coverage report
         run: |
           php CoverageGenerate.php >> Coverage.md
@@ -30,7 +37,7 @@ jobs:
 
       - name: PHPStan Analysis
         run: |
-          ./vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=2048M --error-format=md --no-progress >> 'Static Analysis.md'
+          ./vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=1024M --error-format=md --no-progress >> 'Static Analysis.md'
 
       - name: Wiki checkout
         uses: actions/checkout@v4
