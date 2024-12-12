@@ -31,11 +31,21 @@ jobs:
         env:
           XDEBUG_MODE: coverage
 
+      - name: test
+        run: |
+          ls -la
+          cat output.log
+
       - name: PHPStan
         uses: php-actions/phpstan@v3
         with:
           path: 'tests tests-integration'
           args: '--error-format=github'
+
+      - name: test
+        run: |
+          ls -la
+          cat output.log
 
       - name: Wiki checkout
         uses: actions/checkout@v4
