@@ -1,5 +1,5 @@
 name: PHPStan Analysis and PHPUnit Coverage Report
-on: [push, pull_request]
+on: [pull_request]
 permissions:
   contents: write
 
