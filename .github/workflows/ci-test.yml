@@ -28,7 +28,7 @@ jobs:
           php_extensions: soap intl gd
 
       - name: PHPUnit
-        uses: php-actions/phpunit@v3
+        uses: php-actions/phpunit@v4
         with:
           php_version: "8.3"
           coverage_text: coverage.md
