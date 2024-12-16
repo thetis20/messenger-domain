@@ -22,9 +22,10 @@ class SendMessage
 
     public function execute(SendMessageRequest $request, SendMessagePresenterInterface $presenter): void
     {
-        $message = Message::fromCreation($request);
-        $this->messageGateway->insert($message);
         $discussion = $request->getDiscussion();
+        $message = Message::fromRequest($request);
+        $this->messageGateway->insert($message);
+
         $discussion->markAsUnseen();
         $discussion->markAsSeen([$request->getAuthor()->getEmail()]);
         $this->discussionGateway->update($discussion);

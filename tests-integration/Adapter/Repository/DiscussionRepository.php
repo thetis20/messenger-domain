@@ -4,6 +4,7 @@ namespace Messenger\Domain\TestsIntegration\Adapter\Repository;
 
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\DiscussionMember;
+use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Gateway\DiscussionGateway;
 use Symfony\Component\Uid\Uuid;
 
@@ -85,5 +86,14 @@ class DiscussionRepository implements DiscussionGateway
             }
         }
         return $discussions;
+    }
+
+
+    public function findOneById(string $id): ?Discussion
+    {
+        $index = array_search($id, array_map(function (Discussion $discussion) {
+            return $discussion->getId()->toString();
+        }, Data::getInstance()->getDiscussions()));
+        return $index === false ? null : Data::getInstance()->getDiscussions()[$index];
     }
 }
