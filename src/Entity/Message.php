@@ -7,27 +7,29 @@ use Symfony\Component\Uid\Uuid;
 
 class Message
 {
-    /** @var Uuid */
     private Uuid $id;
-    /** @var Member  */
+    private Discussion $discussion;
     private Member $author;
-    /** @var string  */
     private string $message;
+    private \DateTime $createdAt;
 
-    public static function fromCreation(SendMessageRequest $request): self
+    public static function fromRequest(SendMessageRequest $request): self
     {
         return new self(
             Uuid::v4(),
             $request->getMessage(),
-            $request->getAuthor()
+            $request->getAuthor(),
+            $request->getDiscussion()
         );
     }
 
-    public function __construct(Uuid $id, string $message, Member $author)
+    public function __construct(Uuid $id, string $message, Member $author, Discussion $discussion, \DateTime $createdAt = new \DateTime())
     {
         $this->id = $id;
         $this->message = $message;
         $this->author = $author;
+        $this->discussion = $discussion;
+        $this->createdAt = $createdAt;
     }
 
     public function getId(): Uuid
@@ -43,5 +45,15 @@ class Message
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getDiscussion(): Discussion
+    {
+        return $this->discussion;
     }
 }

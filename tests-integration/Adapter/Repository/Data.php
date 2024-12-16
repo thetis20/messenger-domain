@@ -8,6 +8,7 @@ use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\Entity\Discussion;
 use Symfony\Component\Uid\Uuid;
 
+
 final class Data
 {
     private static Data $instance;
@@ -31,6 +32,18 @@ final class Data
 
     public function __construct()
     {
+        $discussionIds = [
+            "5142abe2-21e2-4363-ba31-d0271f94824e",
+            "be5807da-3097-4e51-8e9b-885f58b076eb",
+            "d4a872f8-bc04-4b90-a789-0d5935e404f1",
+            "ea0cb21c-330c-41d9-82b5-a6a1f9ea940c",
+            "8dada3a9-f7fa-488c-9657-c4caa3fc2a35",
+            "2eaded3c-6a0e-46b7-877e-555f9fc26740",
+            "4e313947-e49c-4932-aeb8-72cca5eca918",
+            "de9831b1-fe68-4a6a-891a-3e94367392a3",
+            "53b9b266-bbaf-4042-97a7-7e34ba075685",
+            "ae181ebf-4742-4cb9-a974-9f63b91373af",
+            "45eb17ea-e3f5-414a-adbc-b807705ab3d9"];
         $this->users = [new User('username@email.com', 'username')];
         for ($i = 1; $i <= 10; $i++) {
             $this->users[] = new User("username$i@email.com", "username$i");
@@ -47,13 +60,27 @@ final class Data
                 if ($i > $y) {
                     continue;
                 }
-                $discussion = new Discussion(Uuid::v4(), "discussion $i/$y");
+                $discussion = new Discussion(
+                    isset($discussionIds[$i + $y - 2]) ? new Uuid($discussionIds[$i + $y - 2]) : Uuid::v4(),
+                    "discussion $i/$y");
                 $discussion->addMember($this->members[$i]);
                 $discussion->addMember($this->members[$y]);
                 $this->discussions[] = $discussion;
             }
         }
         $this->messages = [];
+        foreach ($this->discussions as $discussion) {
+            $countMembers = count($discussion->getDiscussionMembers());
+            for ($i = 1; $i <= 10; $i++) {
+                $this->messages[] = new Message(
+                    Uuid::v4(),
+                    'message ' . $i,
+                    $discussion->getDiscussionMembers()[$i % $countMembers]->getMember(),
+                    $discussion
+                );
+            }
+        }
+
     }
 
     /**
