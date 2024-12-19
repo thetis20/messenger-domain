@@ -19,6 +19,9 @@ final readonly class ShowDiscussion
         $options = [
             'offset' => ($request->getPage() - 1) * $request->getLimit(),
             'limit' => $request->getLimit(),
+            'orderBy' => [
+                'createdAt' => 'DESC'
+            ]
         ];
         $filters = [
             'discussion.id' => $request->getDiscussion()->getId()->toString(),

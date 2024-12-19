@@ -21,7 +21,7 @@ interface MessageGateway
 
     /**
      * @param array{"discussion.id"?: string} $filters
-     * @param array{limit?: int, page?: int, offset?: int} $options
+     * @param array{limit?: int, page?: int, offset?: int, orderBy?: array{createdAt?: string}} $options
      * @return Message[]
      */
     public function findBy(array $filters, array $options): array;
