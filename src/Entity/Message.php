@@ -8,7 +8,7 @@ use Symfony\Component\Uid\Uuid;
 class Message
 {
     private Uuid $id;
-    private Discussion $discussion;
+    private Uuid $discussionId;
     private Member $author;
     private string $message;
     private \DateTime $createdAt;
@@ -19,16 +19,16 @@ class Message
             Uuid::v4(),
             $request->getMessage(),
             $request->getAuthor(),
-            $request->getDiscussion()
+            $request->getDiscussion()->getId(),
         );
     }
 
-    public function __construct(Uuid $id, string $message, Member $author, Discussion $discussion, \DateTime $createdAt = new \DateTime())
+    public function __construct(Uuid $id, string $message, Member $author, Uuid $discussionId, \DateTime $createdAt = new \DateTime())
     {
         $this->id = $id;
         $this->message = $message;
         $this->author = $author;
-        $this->discussion = $discussion;
+        $this->discussionId = $discussionId;
         $this->createdAt = $createdAt;
     }
 
@@ -52,8 +52,8 @@ class Message
         return $this->createdAt;
     }
 
-    public function getDiscussion(): Discussion
+    public function getDiscussionId(): Uuid
     {
-        return $this->discussion;
+        return $this->discussionId;
     }
 }

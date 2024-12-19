@@ -76,7 +76,7 @@ final class Data
                     Uuid::v4(),
                     'message ' . $i,
                     $discussion->getDiscussionMembers()[$i % $countMembers]->getMember(),
-                    $discussion
+                    $discussion->getId()
                 );
             }
         }

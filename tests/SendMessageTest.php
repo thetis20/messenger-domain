@@ -56,7 +56,7 @@ class SendMessageTest extends TestCase
         $this->assertEquals((new \DateTime())->format('Y-m-d'), $this->presenter->response->getMessage()->getCreatedAt()->format('Y-m-d'));
         $this->assertEquals($messageContent, $this->presenter->response->getMessage()->getMessage());
         $this->assertEquals($username, $this->presenter->response->getMessage()->getAuthor()->getUsername());
-        $this->assertEquals($discussionId, $this->presenter->response->getMessage()->getDiscussion()->getId()->toString());
+        $this->assertEquals($discussionId, $this->presenter->response->getMessage()->getDiscussionId());
     }
 
 

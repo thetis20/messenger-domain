@@ -2,7 +2,6 @@
 
 namespace Messenger\Domain\TestsIntegration\Adapter\Repository;
 
-use Messenger\Domain\Entity\DiscussionMember;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Gateway\MessageGateway;
 
@@ -22,7 +21,7 @@ class MessageRepository implements MessageGateway
         foreach (Data::getInstance()->getMessages() as $message) {
 
             if (isset($filters['discussion.id']) &&
-                $filters['discussion.id'] !== $message->getDiscussion()->getId()->toString()) {
+                $filters['discussion.id'] !== $message->getDiscussionId()->toString()) {
                 continue;
             }
             $count++;
@@ -40,7 +39,7 @@ class MessageRepository implements MessageGateway
         $messages = [];
         foreach (Data::getInstance()->getMessages() as $message) {
             if (isset($filters['discussion.id']) &&
-                $filters['discussion.id'] !== $message->getDiscussion()->getId()->toString()) {
+                $filters['discussion.id'] !== $message->getDiscussionId()->toString()) {
                 continue;
             }
             if ($offset > 0) {
