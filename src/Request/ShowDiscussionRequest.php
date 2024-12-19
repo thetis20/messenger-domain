@@ -4,9 +4,9 @@ namespace Messenger\Domain\Request;
 
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\UserInterface;
-use Messenger\Domain\Exception\PaginateMessageForbiddenException;
+use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
 
-class PaginateMessageRequest
+class ShowDiscussionRequest
 {
     /** @var int */
     private int $page;
@@ -20,16 +20,16 @@ class PaginateMessageRequest
      * @param UserInterface $user
      * @param Discussion $discussion
      * @param array{limit?: int, page?: int} $options
-     * @return PaginateMessageRequest
-     * @throws PaginateMessageForbiddenException
+     * @return ShowDiscussionRequest
+     * @throws ShowDiscussionForbiddenException
      */
-    public static function create(UserInterface $user, Discussion $discussion, array $options = []): PaginateMessageRequest
+    public static function create(UserInterface $user, Discussion $discussion, array $options = []): ShowDiscussionRequest
     {
         if (!in_array('ROLE_USER', $user->getRoles()) || !$discussion->isMember($user->getEmail())) {
-            throw new PaginateMessageForbiddenException($user, $discussion->getId());
+            throw new ShowDiscussionForbiddenException($user, $discussion->getId());
         }
 
-        return new PaginateMessageRequest($user, $discussion, $options['page'] ?? 1, $options['limit'] ?? 10);
+        return new ShowDiscussionRequest($user, $discussion, $options['page'] ?? 1, $options['limit'] ?? 10);
     }
 
     /**

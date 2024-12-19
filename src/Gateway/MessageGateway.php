@@ -14,15 +14,15 @@ interface MessageGateway
     public function insert(Message $message): void;
 
     /**
-     * @param array{"discussionMembers.member.email"?: string} $filters
-     * @return mixed
+     * @param array{"discussion.id"?: string} $filters
+     * @return int
      */
     public function countBy(array $filters): int;
 
     /**
-     * @param array{"discussionMembers.member.email"?: string} $filters
-     * @param array{limit?: int, page?: int} $options
-     * @return mixed
+     * @param array{"discussion.id"?: string} $filters
+     * @param array{limit?: int, page?: int, offset?: int} $options
+     * @return Message[]
      */
     public function findBy(array $filters, array $options): array;
 }

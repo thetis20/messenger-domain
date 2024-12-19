@@ -30,6 +30,9 @@ class MessageRepository implements MessageGateway
         return $count;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function findBy(array $filters, array $options): array
     {
         $offset = $options['offset'] ?? 0;

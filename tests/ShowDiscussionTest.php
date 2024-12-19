@@ -2,29 +2,29 @@
 
 namespace Messenger\Domain\Tests;
 
-use Messenger\Domain\Exception\PaginateMessageForbiddenException;
-use Messenger\Domain\Request\PaginateMessageRequest;
-use Messenger\Domain\Response\PaginateMessageResponse;
-use Messenger\Domain\TestsIntegration\Adapter\Presenter\PaginateMessagePresenterTest;
+use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
+use Messenger\Domain\Request\ShowDiscussionRequest;
+use Messenger\Domain\Response\ShowDiscussionResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Presenter\ShowDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MessageRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
-use Messenger\Domain\UseCase\PaginateMessage;
+use Messenger\Domain\UseCase\ShowDiscussion;
 use PHPUnit\Framework\TestCase;
 
-class PaginateMessageTest extends TestCase
+class ShowDiscussionTest extends TestCase
 {
-    private PaginateMessagePresenterTest $presenter;
+    private ShowDiscussionPresenterTest $presenter;
     private UserRepository $userRepository;
-    private PaginateMessage $useCase;
+    private ShowDiscussion $useCase;
     private DiscussionRepository $discussionRepository;
 
     protected function setUp(): void
     {
-        $this->presenter = new PaginateMessagePresenterTest();
+        $this->presenter = new ShowDiscussionPresenterTest();
         $this->userRepository = new UserRepository();
         $this->discussionRepository = new DiscussionRepository();
-        $this->useCase = new PaginateMessage(new MessageRepository());
+        $this->useCase = new ShowDiscussion(new MessageRepository());
     }
 
     /**
@@ -40,7 +40,7 @@ class PaginateMessageTest extends TestCase
      * @param bool $hasPreviousPage
      * @param int|null $nextPage
      * @param int|null $previousPage
-     * @throws PaginateMessageForbiddenException
+     * @throws ShowDiscussionForbiddenException
      */
     public function testSuccessful(
         string $username,
@@ -55,7 +55,7 @@ class PaginateMessageTest extends TestCase
         ?int   $nextPage,
         ?int   $previousPage): void
     {
-        $request = PaginateMessageRequest::create(
+        $request = ShowDiscussionRequest::create(
             $this->userRepository->findOneByUsername($username),
             $this->discussionRepository->findOneById($discussionId),
             [
@@ -65,7 +65,7 @@ class PaginateMessageTest extends TestCase
 
         $this->useCase->execute($request, $this->presenter);
 
-        $this->assertInstanceOf(PaginateMessageResponse::class, $this->presenter->response);
+        $this->assertInstanceOf(ShowDiscussionResponse::class, $this->presenter->response);
 
         $this->assertCount($count, $this->presenter->response->getMessages());
         $this->assertEquals($page, $this->presenter->response->getPage());
@@ -88,8 +88,8 @@ class PaginateMessageTest extends TestCase
 
     public function testFailedValidation(): void
     {
-        $this->expectException(PaginateMessageForbiddenException::class);
-        PaginateMessageRequest::create(
+        $this->expectException(ShowDiscussionForbiddenException::class);
+        ShowDiscussionRequest::create(
             $this->userRepository->findOneByUsername('username10'),
             $this->discussionRepository->findOneById("5142abe2-21e2-4363-ba31-d0271f94824e"));
     }

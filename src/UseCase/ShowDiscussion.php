@@ -3,11 +3,11 @@
 namespace Messenger\Domain\UseCase;
 
 use Messenger\Domain\Gateway\MessageGateway;
-use Messenger\Domain\Presenter\PaginateMessagePresenterInterface;
-use Messenger\Domain\Request\PaginateMessageRequest;
-use Messenger\Domain\Response\PaginateMessageResponse;
+use Messenger\Domain\Presenter\ShowDiscussionPresenterInterface;
+use Messenger\Domain\Request\ShowDiscussionRequest;
+use Messenger\Domain\Response\ShowDiscussionResponse;
 
-class PaginateMessage
+class ShowDiscussion
 {
     private MessageGateway $messageGateway;
 
@@ -17,7 +17,7 @@ class PaginateMessage
         $this->messageGateway = $messageGateway;
     }
 
-    public function execute(PaginateMessageRequest $request, PaginateMessagePresenterInterface $presenter): void
+    public function execute(ShowDiscussionRequest $request, ShowDiscussionPresenterInterface $presenter): void
     {
         $options = [
             'offset' => ($request->getPage() - 1) * $request->getLimit(),
@@ -28,7 +28,7 @@ class PaginateMessage
         ];
         $total = $this->messageGateway->countBy($filters);
         $messages = $this->messageGateway->findBy($filters, $options);
-        $presenter->present(new PaginateMessageResponse(
+        $presenter->present(new ShowDiscussionResponse(
             $request->getDiscussion(),
             $messages,
             $total,

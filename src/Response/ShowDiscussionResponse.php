@@ -5,7 +5,7 @@ namespace Messenger\Domain\Response;
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\Message;
 
-class PaginateMessageResponse
+class ShowDiscussionResponse
 {
     /** @var Message[] */
     private array $messages;
@@ -14,6 +14,13 @@ class PaginateMessageResponse
     private int $page;
     private Discussion $discussion;
 
+    /**
+     * @param Discussion $discussion
+     * @param Message[] $messages
+     * @param int $total
+     * @param int $limit
+     * @param int $page
+     */
     public function __construct(Discussion $discussion, array $messages, int $total, int $limit, int $page)
     {
         $this->discussion = $discussion;
@@ -28,6 +35,9 @@ class PaginateMessageResponse
         return $this->discussion;
     }
 
+    /**
+     * @return Message[]
+     */
     public function getMessages(): array
     {
         return $this->messages;
@@ -50,7 +60,7 @@ class PaginateMessageResponse
 
     public function getTotalPages(): int
     {
-        return ceil($this->total / $this->limit);
+        return (int) ceil($this->total / $this->limit);
     }
 
     public function hasPreviousPage(): bool

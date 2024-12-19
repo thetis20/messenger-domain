@@ -5,7 +5,7 @@ namespace Messenger\Domain\Exception;
 
 use Messenger\Domain\Entity\UserInterface;
 
-final class PaginateMessageForbiddenException extends \Exception
+final class ShowDiscussionForbiddenException extends \Exception
 {
     public const int CODE = 6004;
 

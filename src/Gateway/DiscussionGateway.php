@@ -21,14 +21,14 @@ interface DiscussionGateway
 
     /**
      * @param array{"discussionMembers.member.email"?: string} $filters
-     * @return mixed
+     * @return int
      */
     public function countBy(array $filters): int;
 
     /**
      * @param array{"discussionMembers.member.email"?: string} $filters
      * @param array{limit?: int, page?: int} $options
-     * @return mixed
+     * @return Discussion[]
      */
     public function findBy(array $filters, array $options): array;
 }

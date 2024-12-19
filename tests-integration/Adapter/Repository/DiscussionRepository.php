@@ -63,6 +63,11 @@ class DiscussionRepository implements DiscussionGateway
         return $count;
     }
 
+    /**
+     * @param array{"discussionMembers.member.email"?: string} $filters
+     * @param array{offset?: int, limit?: int} $options
+     * @return Discussion[]
+     */
     public function findBy(array $filters, array $options): array
     {
         $offset = $options['offset'] ?? 0;

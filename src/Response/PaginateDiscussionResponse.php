@@ -15,6 +15,12 @@ class PaginateDiscussionResponse
     /** @var int */
     private int $page;
 
+    /**
+     * @param Discussion[] $discussions
+     * @param int $total
+     * @param int $limit
+     * @param int $page
+     */
     public function __construct(array $discussions, int $total, int $limit, int $page)
     {
         $this->discussions = $discussions;
@@ -23,6 +29,9 @@ class PaginateDiscussionResponse
         $this->page = $page;
     }
 
+    /**
+     * @return Discussion[]
+     */
     public function getDiscussions(): array
     {
         return $this->discussions;
@@ -45,7 +54,7 @@ class PaginateDiscussionResponse
 
     public function getTotalPages(): int
     {
-        return ceil($this->total / $this->limit);
+        return (int) ceil($this->total / $this->limit);
     }
 
     public function hasPreviousPage(): bool
