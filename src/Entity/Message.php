@@ -52,9 +52,13 @@ class Message
         return $this->createdAt;
     }
 
-    public function getDiscussion(): Discussion
+    /**
+     * @param array{ignoreUnset?: bool} $options
+     * @return Discussion
+     */
+    public function getDiscussion(array $options = []): ?Discussion
     {
-        if (!$this->discussion) {
+        if (!$this->discussion && $options['ignoreUnset'] !== true) {
             throw new \RuntimeException('Discussion not set');
         }
         return $this->discussion;
