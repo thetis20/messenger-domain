@@ -8,7 +8,7 @@ use Symfony\Component\Uid\Uuid;
 class Message
 {
     private Uuid $id;
-    private ?Discussion $discussion;
+    private Discussion $discussion;
     private Member $author;
     private string $message;
     private \DateTime $createdAt;
@@ -23,7 +23,7 @@ class Message
         );
     }
 
-    public function __construct(Uuid $id, string $message, Member $author, ?Discussion $discussion, \DateTime $createdAt = new \DateTime())
+    public function __construct(Uuid $id, string $message, Member $author, Discussion $discussion, \DateTime $createdAt = new \DateTime())
     {
         $this->id = $id;
         $this->message = $message;
@@ -52,15 +52,8 @@ class Message
         return $this->createdAt;
     }
 
-    /**
-     * @param array{ignoreUnset?: bool} $options
-     * @return Discussion
-     */
-    public function getDiscussion(array $options = []): ?Discussion
+    public function getDiscussion(): Discussion
     {
-        if (!$this->discussion && $options['ignoreUnset'] !== true) {
-            throw new \RuntimeException('Discussion not set');
-        }
         return $this->discussion;
     }
 }

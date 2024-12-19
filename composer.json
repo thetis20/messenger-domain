@@ -46,7 +46,7 @@
   },
   "scripts": {
     "phpstan": "vendor/bin/phpstan analyse src tests tests-integration --level 6",
-    "test": "phpunit",
-    "tests": "phpunit"
+    "test": "XDEBUG_MODE=coverage phpunit --coverage-html=coverage",
+    "tests": "XDEBUG_MODE=coverage phpunit --coverage-html=coverage"
   }
 }

@@ -11,11 +11,21 @@ class User implements UserInterface
     private string $email;
     /** @var string */
     private string $username;
+    /**
+     * @var string[]
+     */
+    private array $roles;
 
-    public function __construct(string $email, string $username)
+    /**
+     * @param string $email
+     * @param string $username
+     * @param string[] $roles
+     */
+    public function __construct(string $email, string $username, array $roles = ['ROLE_USER'])
     {
         $this->email = $email;
         $this->username = $username;
+        $this->roles = $roles;
     }
 
     /**
@@ -41,7 +51,7 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        return $this->roles;
     }
 
     public function getUsualName(): string

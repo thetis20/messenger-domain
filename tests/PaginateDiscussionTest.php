@@ -2,12 +2,14 @@
 
 namespace Messenger\Domain\Tests;
 
+use Messenger\Domain\Exception\PaginateDiscussionForbiddenException;
 use Messenger\Domain\Request\PaginateDiscussionRequest;
 use Messenger\Domain\RequestFactory\PaginateDiscussionRequestFactory;
 use Messenger\Domain\Response\PaginateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\PaginateDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
+use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\PaginateDiscussion;
 use PHPUnit\Framework\TestCase;
 
@@ -70,5 +72,11 @@ class PaginateDiscussionTest extends TestCase
         yield ['username2', 3, 1, 3, 10, 4, true, false, 2, null];
         yield ['username2', 3, 3, 3, 10, 4, true, true, 4, 2];
         yield ['username2', 3, 4, 1, 10, 4, false, true, null, 3];
+    }
+
+    public function testForbidden(): void
+    {
+        $this->expectException(PaginateDiscussionForbiddenException::class);
+        $this->requestFactory->create(new User('username+forbidden@email.com', 'username+forbidden', []));
     }
 }

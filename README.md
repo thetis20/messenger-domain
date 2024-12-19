@@ -72,46 +72,49 @@ This project composer
 title: Messenger Domain
 ---
 classDiagram
-    Discussion "1" *-- "*" DiscussionMember
-    Member "1" *-- "*" DiscussionMember
-    Discussion "1" *-- "*" Message
-    Member "1" <-- "*" Message
-    class Discussion{
-        -Uuid id
-        -string name
-        +getId(): string
-        +getName(): string
-        +getDiscussionMembers(): DiscussionMember[]
-        +isMember(string email): bool
-        +findDiscussionMemberByEmail(string email): ?DiscussionMember
-        +addMember(Member member,bool seen): void
-        +markAsUnseen(?array emails = null): void
-        +markAsSeen(?array emails = null): void
-    }
-    class DiscussionMember{
-        -bool seen
-        +isSeen(): bool
-        +markAsUnseen(): void
-        +markAsSeen(): void
-        +getMember(): Member
-        +getDiscussion(): Discussion
-    }
-    class Member{
-        -string email
-        -?string userIdentifier
-        -?string username
-        +getEmail(): string
-        +getUserIdentifier(): ?string
-        +getUsername(): ?string
-    }
-    class Message{
-        -Uuid id
-        -Member author
-        -string Message
-        +getId(): Uuid
-        +getAuthor(): Member
-        +getMessage(): string
-    }
+   Discussion "1" *-- "*" DiscussionMember
+   Member "1" *-- "*" DiscussionMember
+   Discussion "1" *-- "*" Message
+   Member "1" <-- "*" Message
+   class Discussion {
+      -Uuid id
+      -string name
+      +getId(): string
+      +getName(): string
+      +getDiscussionMembers(): DiscussionMember[]
+      +isMember(string email): bool
+      +findDiscussionMemberByEmail(string email): ?DiscussionMember
+      +addMember(Member member, bool seen): void
+      +markAsUnseen(?array emails = null): void
+      +markAsSeen(?array emails = null): void
+   }
+   class DiscussionMember {
+      -bool seen
+      +isSeen(): bool
+      +markAsUnseen(): void
+      +markAsSeen(): void
+      +getMember(): Member
+      +getDiscussion(): Discussion
+   }
+   class Member {
+      -string email
+      -?string userIdentifier
+      -?string username
+      +getEmail(): string
+      +getUserIdentifier(): ?string
+      +getUsername(): ?string
+   }
+   class Message {
+      -Uuid id
+      -Member author
+      -string Message
+      -DateTime createdAt
+      +getId(): Uuid
+      +getAuthor(): Member
+      +getMessage(): string
+      +getCreatedAt(): DateTime
+      +getDiscusion(?array options): ?Discussion
+   }
 
 ```
 ## Use Cases

@@ -33,7 +33,7 @@ final readonly class CreateDiscussion
                 $request->getAuthor()->getUsualName());
             $this->memberGateway->insert($authorMember);
         }
-        $discussion->addMember($authorMember);
+        $discussion->addMember($authorMember, true);
 
         foreach ($request->getEmails() as $ref) {
             $member = $this->memberGateway->findOneByEmail($ref);

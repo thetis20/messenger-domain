@@ -38,7 +38,7 @@ final readonly class ShowDiscussionRequestFactory
             throw new ShowDiscussionForbiddenException($user);
         }
 
-        return new ShowDiscussionRequest($user, $discussion, $options['page'] ?? 1, $options['limit'] ?? 10);
+        return new ShowDiscussionRequest($discussion, $options['page'] ?? 1, $options['limit'] ?? 10);
     }
 
 }

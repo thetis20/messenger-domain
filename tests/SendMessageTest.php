@@ -7,16 +7,17 @@ use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Exception\DiscussionNotFoundException;
 use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
 use Messenger\Domain\Exception\SendMessageForbiddenException;
-use Messenger\Domain\Request\SendMessageRequest;
 use Messenger\Domain\RequestFactory\SendMessageRequestFactory;
 use Messenger\Domain\Response\SendMessageResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\SendMessagePresenterTest;
+use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\SendMessage;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MessageRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
 use Assert\AssertionFailedException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
 class SendMessageTest extends TestCase
 {
@@ -51,6 +52,8 @@ class SendMessageTest extends TestCase
         $this->assertInstanceOf(Discussion::class, $this->presenter->response->getDiscussion());
         $this->assertInstanceOf(Message::class, $this->presenter->response->getMessage());
         $this->assertEquals($discussionId, $this->presenter->response->getDiscussion()->getId()->toString());
+        $this->assertInstanceOf(Uuid::class, $this->presenter->response->getMessage()->getId());
+        $this->assertEquals((new \DateTime())->format('Y-m-d'), $this->presenter->response->getMessage()->getCreatedAt()->format('Y-m-d'));
         $this->assertEquals($messageContent, $this->presenter->response->getMessage()->getMessage());
         $this->assertEquals($username, $this->presenter->response->getMessage()->getAuthor()->getUsername());
         $this->assertEquals($discussionId, $this->presenter->response->getMessage()->getDiscussion()->getId()->toString());
@@ -83,5 +86,19 @@ class SendMessageTest extends TestCase
     {
         yield ["", "8dada3a9-f7fa-488c-9657-c4caa3fc2a35", 'username1', AssertionFailedException::class];
         yield ["", "8dada3a9-f7fa-488c-9657-c4caa3fc2a35", 'username2', NotAMemberOfTheDiscussionException::class];
+    }
+
+    public function testForbidden(): void
+    {
+        $this->expectException(SendMessageForbiddenException::class);
+        $this->requestFactory->create(new User('username+forbidden@email.com', 'username+forbidden', []),
+            "8dada3a9-f7fa-488c-9657-c4caa3fc2a35", 'username1');
+    }
+
+    public function testNotFound(): void
+    {
+        $this->expectException(DiscussionNotFoundException::class);
+        $this->requestFactory->create($this->userGateway->findOneByUsername('username1'),
+            "8dada3a0-f7fa-488c-9657-c4caa3fc2a35", 'username1');
     }
 }

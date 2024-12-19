@@ -3,6 +3,8 @@
 namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Exception\DiscussionNotFoundException;
+use Messenger\Domain\Exception\DiscussionNotSetException;
+use Messenger\Domain\Exception\SendMessageForbiddenException;
 use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
 use Messenger\Domain\RequestFactory\ShowDiscussionRequestFactory;
 use Messenger\Domain\Response\ShowDiscussionResponse;
@@ -10,6 +12,7 @@ use Messenger\Domain\TestsIntegration\Adapter\Presenter\ShowDiscussionPresenterT
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MessageRepository;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
+use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\ShowDiscussion;
 use PHPUnit\Framework\TestCase;
 
@@ -33,6 +36,7 @@ class ShowDiscussionTest extends TestCase
      * @dataProvider provideSuccessfulValidationRequestsData
      * @param string $username
      * @param string $discussionId
+     * @param string $discussionName
      * @param int $limit
      * @param int $page
      * @param int $count
@@ -42,12 +46,13 @@ class ShowDiscussionTest extends TestCase
      * @param bool $hasPreviousPage
      * @param int|null $nextPage
      * @param int|null $previousPage
-     * @throws ShowDiscussionForbiddenException
      * @throws DiscussionNotFoundException
+     * @throws ShowDiscussionForbiddenException
      */
     public function testSuccessful(
         string $username,
         string $discussionId,
+        string $discussionName,
         int    $limit,
         int    $page,
         int    $count,
@@ -70,6 +75,7 @@ class ShowDiscussionTest extends TestCase
 
         $this->assertInstanceOf(ShowDiscussionResponse::class, $this->presenter->response);
 
+        $this->assertEquals($discussionName, $this->presenter->response->getDiscussion()->getName());
         $this->assertCount($count, $this->presenter->response->getMessages());
         $this->assertEquals($page, $this->presenter->response->getPage());
         $this->assertEquals($total, $this->presenter->response->getTotal());
@@ -83,10 +89,10 @@ class ShowDiscussionTest extends TestCase
 
     public function provideSuccessfulValidationRequestsData(): \Generator
     {
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", 10, 1, 10, 10, 1, false, false, null, null];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", 3, 1, 3, 10, 4, true, false, 2, null];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", 3, 3, 3, 10, 4, true, true, 4, 2];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", 3, 4, 1, 10, 4, false, true, null, 3];
+        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",10, 1, 10, 10, 1, false, false, null, null];
+        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 1, 3, 10, 4, true, false, 2, null];
+        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 3, 3, 10, 4, true, true, 4, 2];
+        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 4, 1, 10, 4, false, true, null, 3];
     }
 
     public function testFailedValidation(): void
@@ -95,5 +101,20 @@ class ShowDiscussionTest extends TestCase
         $this->requestFactory->create(
             $this->userRepository->findOneByUsername('username10'),
             "5142abe2-21e2-4363-ba31-d0271f94824e");
+    }
+
+    public function testNotFoundValidation(): void
+    {
+        $this->expectException(DiscussionNotFoundException::class);
+        $this->requestFactory->create(
+            $this->userRepository->findOneByUsername('username10'),
+            "5142abe3-21e2-4363-ba31-d0271f94824e");
+    }
+
+    public function testForbidden(): void
+    {
+        $this->expectException(ShowDiscussionForbiddenException::class);
+        $this->requestFactory->create(new User('username+forbidden@email.com', 'username+forbidden', []),
+            "8dada3a9-f7fa-488c-9657-c4caa3fc2a35");
     }
 }
