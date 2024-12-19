@@ -7,14 +7,11 @@ use Messenger\Domain\Presenter\ShowDiscussionPresenterInterface;
 use Messenger\Domain\Request\ShowDiscussionRequest;
 use Messenger\Domain\Response\ShowDiscussionResponse;
 
-class ShowDiscussion
+final readonly class ShowDiscussion
 {
-    private MessageGateway $messageGateway;
-
     public function __construct(
-        MessageGateway    $messageGateway)
+        private MessageGateway $messageGateway)
     {
-        $this->messageGateway = $messageGateway;
     }
 
     public function execute(ShowDiscussionRequest $request, ShowDiscussionPresenterInterface $presenter): void

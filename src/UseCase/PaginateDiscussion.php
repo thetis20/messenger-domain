@@ -7,14 +7,10 @@ use Messenger\Domain\Presenter\PaginateDiscussionPresenterInterface;
 use Messenger\Domain\Request\PaginateDiscussionRequest;
 use Messenger\Domain\Response\PaginateDiscussionResponse;
 
-class PaginateDiscussion
+final readonly class PaginateDiscussion
 {
-    /** @var DiscussionGateway */
-    private DiscussionGateway $discussionGateway;
-
-    public function __construct(DiscussionGateway $discussionGateway)
+    public function __construct(private DiscussionGateway $discussionGateway)
     {
-        $this->discussionGateway = $discussionGateway;
     }
 
     public function execute(PaginateDiscussionRequest $request, PaginateDiscussionPresenterInterface $presenter): void

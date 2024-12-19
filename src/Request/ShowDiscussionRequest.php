@@ -19,22 +19,6 @@ class ShowDiscussionRequest
     /**
      * @param UserInterface $user
      * @param Discussion $discussion
-     * @param array{limit?: int, page?: int} $options
-     * @return ShowDiscussionRequest
-     * @throws ShowDiscussionForbiddenException
-     */
-    public static function create(UserInterface $user, Discussion $discussion, array $options = []): ShowDiscussionRequest
-    {
-        if (!in_array('ROLE_USER', $user->getRoles()) || !$discussion->isMember($user->getEmail())) {
-            throw new ShowDiscussionForbiddenException($user, $discussion->getId());
-        }
-
-        return new ShowDiscussionRequest($user, $discussion, $options['page'] ?? 1, $options['limit'] ?? 10);
-    }
-
-    /**
-     * @param UserInterface $user
-     * @param Discussion $discussion
      * @param int $page
      * @param int $limit
      */

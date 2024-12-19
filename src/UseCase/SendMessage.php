@@ -9,15 +9,13 @@ use Messenger\Domain\Presenter\SendMessagePresenterInterface;
 use Messenger\Domain\Request\SendMessageRequest;
 use Messenger\Domain\Response\SendMessageResponse;
 
-class SendMessage
+final readonly class SendMessage
 {
-    private MessageGateway $messageGateway;
-    private DiscussionGateway $discussionGateway;
 
-    public function __construct(MessageGateway $messageGateway, DiscussionGateway $discussionGateway)
+    public function __construct(
+        private MessageGateway $messageGateway,
+        private DiscussionGateway $discussionGateway)
     {
-        $this->messageGateway = $messageGateway;
-        $this->discussionGateway = $discussionGateway;
     }
 
     public function execute(SendMessageRequest $request, SendMessagePresenterInterface $presenter): void

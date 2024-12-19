@@ -2,8 +2,9 @@
 
 namespace Messenger\Domain\Tests;
 
+use Messenger\Domain\Exception\DiscussionNotFoundException;
 use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
-use Messenger\Domain\Request\ShowDiscussionRequest;
+use Messenger\Domain\RequestFactory\ShowDiscussionRequestFactory;
 use Messenger\Domain\Response\ShowDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\ShowDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
@@ -17,14 +18,15 @@ class ShowDiscussionTest extends TestCase
     private ShowDiscussionPresenterTest $presenter;
     private UserRepository $userRepository;
     private ShowDiscussion $useCase;
-    private DiscussionRepository $discussionRepository;
+    private ShowDiscussionRequestFactory $requestFactory;
 
     protected function setUp(): void
     {
+        $discussionRepository = new DiscussionRepository();
         $this->presenter = new ShowDiscussionPresenterTest();
         $this->userRepository = new UserRepository();
-        $this->discussionRepository = new DiscussionRepository();
         $this->useCase = new ShowDiscussion(new MessageRepository());
+        $this->requestFactory = new ShowDiscussionRequestFactory($discussionRepository);
     }
 
     /**
@@ -41,6 +43,7 @@ class ShowDiscussionTest extends TestCase
      * @param int|null $nextPage
      * @param int|null $previousPage
      * @throws ShowDiscussionForbiddenException
+     * @throws DiscussionNotFoundException
      */
     public function testSuccessful(
         string $username,
@@ -55,9 +58,9 @@ class ShowDiscussionTest extends TestCase
         ?int   $nextPage,
         ?int   $previousPage): void
     {
-        $request = ShowDiscussionRequest::create(
+        $request = $this->requestFactory->create(
             $this->userRepository->findOneByUsername($username),
-            $this->discussionRepository->findOneById($discussionId),
+            $discussionId,
             [
                 'limit' => $limit,
                 'page' => $page,
@@ -89,8 +92,8 @@ class ShowDiscussionTest extends TestCase
     public function testFailedValidation(): void
     {
         $this->expectException(ShowDiscussionForbiddenException::class);
-        ShowDiscussionRequest::create(
+        $this->requestFactory->create(
             $this->userRepository->findOneByUsername('username10'),
-            $this->discussionRepository->findOneById("5142abe2-21e2-4363-ba31-d0271f94824e"));
+            "5142abe2-21e2-4363-ba31-d0271f94824e");
     }
 }

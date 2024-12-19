@@ -16,21 +16,6 @@ class PaginateDiscussionRequest
 
     /**
      * @param UserInterface $user
-     * @param array{limit?: int, page?: int} $options
-     * @return PaginateDiscussionRequest
-     * @throws PaginateDiscussionForbiddenException
-     */
-    public static function create(UserInterface $user, array $options = []): PaginateDiscussionRequest
-    {
-        if (!in_array('ROLE_USER', $user->getRoles())) {
-            throw new PaginateDiscussionForbiddenException($user);
-        }
-
-        return new PaginateDiscussionRequest($user, $options['page'] ?? 1, $options['limit'] ?? 10);
-    }
-
-    /**
-     * @param UserInterface $user
      * @param int $page
      * @param int $limit
      */

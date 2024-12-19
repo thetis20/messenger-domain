@@ -12,17 +12,13 @@ use Messenger\Domain\Request\CreateDiscussionRequest;
 use Messenger\Domain\Response\CreateDiscussionResponse;
 use Symfony\Component\Uid\Uuid;
 
-class CreateDiscussion
+final readonly class CreateDiscussion
 {
-    private DiscussionGateway $discussionGateway;
-    private MemberGateway $memberGateway;
 
     public function __construct(
-        DiscussionGateway $discussionGateway,
-        MemberGateway     $memberGateway)
+        private DiscussionGateway $discussionGateway,
+        private MemberGateway     $memberGateway)
     {
-        $this->discussionGateway = $discussionGateway;
-        $this->memberGateway = $memberGateway;
     }
 
     public function execute(CreateDiscussionRequest $request, CreateDiscussionPresenterInterface $presenter): void

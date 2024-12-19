@@ -5,6 +5,7 @@ namespace Messenger\Domain\Tests;
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Exception\CreateDiscussionForbiddenException;
 use Messenger\Domain\Request\CreateDiscussionRequest;
+use Messenger\Domain\RequestFactory\CreateDiscussionRequestFactory;
 use Messenger\Domain\Response\CreateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\CreateDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MemberRepository;
@@ -19,20 +20,25 @@ class CreateDiscussionTest extends TestCase
     private CreateDiscussionPresenterTest $presenter;
     private UserRepository $userGateway;
     private CreateDiscussion $useCase;
+    private CreateDiscussionRequestFactory $requestFactory;
 
     protected function setUp(): void
     {
         $this->presenter = new CreateDiscussionPresenterTest();
         $this->userGateway = new UserRepository();
         $this->useCase = new CreateDiscussion(new DiscussionRepository(), new MemberRepository());
+        $this->requestFactory = new CreateDiscussionRequestFactory();
     }
 
+    /**
+     * @throws CreateDiscussionForbiddenException
+     */
     public function testSuccessful(): void
     {
-        $request = CreateDiscussionRequest::create(
+        $request = $this->requestFactory->create(
+            $this->userGateway->findOneByUsername('username'),
             "discussion name",
-            ['username1@email.com'],
-            $this->userGateway->findOneByUsername('username'));
+            ['username1@email.com']);
 
         $this->useCase->execute($request, $this->presenter);
 
@@ -61,7 +67,7 @@ class CreateDiscussionTest extends TestCase
     {
         $currentUser = $usernameAuthor ? $this->userGateway->findOneByUsername($usernameAuthor) : $usernameAuthor;
         $this->expectException(AssertionFailedException::class);
-        CreateDiscussionRequest::create($name, $members, $currentUser);
+        $this->requestFactory->create($currentUser, $name, $members);
     }
 
     static public function provideFailedValidationRequestsData(): \Generator

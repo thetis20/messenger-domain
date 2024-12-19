@@ -26,6 +26,12 @@ interface DiscussionGateway
     public function countBy(array $filters): int;
 
     /**
+     * @param string $id
+     * @return Discussion|null
+     */
+    public function find(string $id): ?Discussion;
+
+    /**
      * @param array{"discussionMembers.member.email"?: string} $filters
      * @param array{limit?: int, page?: int} $options
      * @return Discussion[]

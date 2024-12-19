@@ -2,9 +2,6 @@
 
 namespace Messenger\Domain\Exception;
 
-use Assert\AssertionFailedException;
-use Assert\InvalidArgumentException;
-
 final class NotAMemberOfTheDiscussionException extends \Exception
 {
     public const int CODE = 6000;

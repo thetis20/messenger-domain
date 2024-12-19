@@ -3,6 +3,7 @@
 namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Request\PaginateDiscussionRequest;
+use Messenger\Domain\RequestFactory\PaginateDiscussionRequestFactory;
 use Messenger\Domain\Response\PaginateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\PaginateDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\DiscussionRepository;
@@ -15,12 +16,14 @@ class PaginateDiscussionTest extends TestCase
     private PaginateDiscussionPresenterTest $presenter;
     private UserRepository $userRepository;
     private PaginateDiscussion $useCase;
+    private PaginateDiscussionRequestFactory $requestFactory;
 
     protected function setUp(): void
     {
         $this->presenter = new PaginateDiscussionPresenterTest();
         $this->userRepository = new UserRepository();
         $this->useCase = new PaginateDiscussion(new DiscussionRepository());
+        $this->requestFactory = new PaginateDiscussionRequestFactory();
     }
 
     /**
@@ -39,7 +42,8 @@ class PaginateDiscussionTest extends TestCase
         ?int   $nextPage,
         ?int   $previousPage): void
     {
-        $request = PaginateDiscussionRequest::create($this->userRepository->findOneByUsername($username),
+        $request = $this->requestFactory->create(
+            $this->userRepository->findOneByUsername($username),
             [
                 'limit' => $limit,
                 'page' => $page,
