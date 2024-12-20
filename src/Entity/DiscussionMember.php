@@ -43,6 +43,6 @@ class DiscussionMember
 
     public function markAsSeen(): void
     {
-        $this->seen = false;
+        $this->seen = true;
     }
 }

@@ -93,4 +93,18 @@ class Discussion
             }
         }
     }
+
+    /**
+     * @param bool $seen
+     * @param string[]|null $emails if null it marks all member as seen
+     * @return void
+     */
+    public function markAs(bool $seen, ?array $emails = null): void
+    {
+        if ($seen) {
+            $this->markAsSeen($emails);
+        } else {
+            $this->markAsUnseen($emails);
+        }
+    }
 }

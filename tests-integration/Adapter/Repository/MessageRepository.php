@@ -2,23 +2,34 @@
 
 namespace Messenger\Domain\TestsIntegration\Adapter\Repository;
 
+use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Gateway\MessageGateway;
+use Messenger\Domain\TestsIntegration\Entity\User;
 
 class MessageRepository implements MessageGateway
 {
+    /** @var array{users: User[], discussions:Discussion[], members: Member[], messages: Message[]} */
+    private array $data;
+
+    /**
+     * @param array{users: User[], discussions:Discussion[], members: Member[], messages: Message[]} $data
+     */
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
 
     public function insert(Message $message): void
     {
-        $messages = Data::getInstance()->getMessages();
-        $messages[] = $message;
-        Data::getInstance()->setMessages($messages);
+        $this->data['messages'][] = $message;
     }
 
     public function countBy(array $filters): int
     {
         $count = 0;
-        foreach (Data::getInstance()->getMessages() as $message) {
+        foreach ($this->data['messages'] as $message) {
 
             if (isset($filters['discussion.id']) &&
                 $filters['discussion.id'] !== $message->getDiscussionId()->toString()) {
@@ -37,7 +48,7 @@ class MessageRepository implements MessageGateway
         $offset = $options['offset'] ?? 0;
         $limit = $options['limit'] ?? 10;
         $messages = [];
-        foreach (Data::getInstance()->getMessages() as $message) {
+        foreach ($this->data['messages'] as $message) {
             if (isset($filters['discussion.id']) &&
                 $filters['discussion.id'] !== $message->getDiscussionId()->toString()) {
                 continue;

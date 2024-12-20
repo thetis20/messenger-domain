@@ -10,12 +10,20 @@ use Symfony\Component\Uid\Uuid;
 
 class DiscussionRepository implements DiscussionGateway
 {
+    /** @var array{discussions: Discussion[]} */
+    private array $data;
+
+    /**
+     * @param array{discussions: Discussion[]} $data
+     */
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
 
     public function insert(Discussion $discussion): void
     {
-        $discussions = Data::getInstance()->getDiscussions();
-        $discussions[] = $discussion;
-        Data::getInstance()->setDiscussions($discussions);
+        $this->data['discussions'][] = $discussion;
     }
 
     /**
@@ -27,7 +35,7 @@ class DiscussionRepository implements DiscussionGateway
         if (!$id instanceof Uuid) {
             $id = new Uuid($id);
         }
-        foreach (Data::getInstance()->getDiscussions() as $discussion) {
+        foreach ($this->data['discussions'] as $discussion) {
             if ($discussion->getId()->toString() === $id->toString()) {
                 return $discussion;
             }
@@ -37,19 +45,17 @@ class DiscussionRepository implements DiscussionGateway
 
     public function update(Discussion $discussion): void
     {
-        $discussions = Data::getInstance()->getDiscussions();
-        foreach ($discussions as $key => $d) {
+        foreach ($this->data['discussions'] as $key => $d) {
             if ($d->getId()->toString() === $discussion->getId()->toString()) {
-                $discussions[$key] = $discussion;
+                $this->data['discussions'][$key] = $discussion;
             }
         }
-        Data::getInstance()->setDiscussions($discussions);
     }
 
     public function countBy(array $filters): int
     {
         $count = 0;
-        foreach (Data::getInstance()->getDiscussions() as $discussion) {
+        foreach ($this->data['discussions'] as $discussion) {
 
             if (isset($filters['discussionMembers.member.email']) &&
                 !in_array($filters['discussionMembers.member.email'],
@@ -73,7 +79,7 @@ class DiscussionRepository implements DiscussionGateway
         $offset = $options['offset'] ?? 0;
         $limit = $options['limit'] ?? 10;
         $discussions = [];
-        foreach (Data::getInstance()->getDiscussions() as $discussion) {
+        foreach ($this->data['discussions'] as $discussion) {
             if (isset($filters['discussionMembers.member.email']) &&
                 !in_array($filters['discussionMembers.member.email'],
                     array_map(function (DiscussionMember $discussionMember) {
@@ -98,7 +104,7 @@ class DiscussionRepository implements DiscussionGateway
     {
         $index = array_search($id, array_map(function (Discussion $discussion) {
             return $discussion->getId()->toString();
-        }, Data::getInstance()->getDiscussions()));
-        return $index === false ? null : Data::getInstance()->getDiscussions()[$index];
+        }, $this->data['discussions']));
+        return $index === false ? null : $this->data['discussions'][$index];
     }
 }

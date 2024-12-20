@@ -2,13 +2,8 @@
 
 namespace Messenger\Domain\Request;
 
-use Assert\AssertionFailedException;
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\Member;
-use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
-use Messenger\Domain\Entity\UserInterface;
-use Assert\Assertion;
-use Messenger\Domain\Exception\SendMessageForbiddenException;
 
 class SendMessageRequest
 {

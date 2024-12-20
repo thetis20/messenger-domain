@@ -2,6 +2,9 @@
 
 namespace Messenger\Domain\Tests;
 
+use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
+use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Exception\DiscussionNotFoundException;
 use Messenger\Domain\Exception\DiscussionNotSetException;
 use Messenger\Domain\Exception\SendMessageForbiddenException;
@@ -15,6 +18,7 @@ use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
 use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\ShowDiscussion;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
 class ShowDiscussionTest extends TestCase
 {
@@ -25,10 +29,40 @@ class ShowDiscussionTest extends TestCase
 
     protected function setUp(): void
     {
-        $discussionRepository = new DiscussionRepository();
+        $data = [
+            'users' => [
+                new User('username1@email.com', 'username1'),
+                new User('username2@email.com', 'username2'),
+                new User('username3@email.com', 'username3')
+            ],
+            'discussions' => [
+                new Discussion(
+                    new Uuid("45eb17ea-e3f5-414a-adbc-b807705ab3d9"),
+                    "discussion 1")
+            ],
+            'members' => [
+                new Member('username1@email.com', 'username1', 'username1'),
+                new Member('username2@email.com', 'username2', 'username2'),
+            ],
+            'messages' => []
+        ];
+        $data['discussions'][0]->addMember($data['members'][0]);
+        $data['discussions'][0]->addMember($data['members'][1]);
+        foreach ($data['discussions'] as $discussion) {
+            $countMembers = count($discussion->getDiscussionMembers());
+            for ($i = 1; $i <= 10; $i++) {
+                $data['messages'][] = new Message(
+                    Uuid::v4(),
+                    'message ' . $i,
+                    $discussion->getDiscussionMembers()[$i % $countMembers]->getMember(),
+                    $discussion->getId()
+                );
+            }
+        }
+        $discussionRepository = new DiscussionRepository($data);
         $this->presenter = new ShowDiscussionPresenterTest();
-        $this->userRepository = new UserRepository();
-        $this->useCase = new ShowDiscussion(new MessageRepository());
+        $this->userRepository = new UserRepository($data);
+        $this->useCase = new ShowDiscussion(new MessageRepository($data));
         $this->requestFactory = new ShowDiscussionRequestFactory($discussionRepository);
     }
 
@@ -89,25 +123,25 @@ class ShowDiscussionTest extends TestCase
 
     public function provideSuccessfulValidationRequestsData(): \Generator
     {
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",10, 1, 10, 10, 1, false, false, null, null];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 1, 3, 10, 4, true, false, 2, null];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 3, 3, 10, 4, true, true, 4, 2];
-        yield ['username1', "5142abe2-21e2-4363-ba31-d0271f94824e", "discussion 1/1",3, 4, 1, 10, 4, false, true, null, 3];
+        yield ['username1', "45eb17ea-e3f5-414a-adbc-b807705ab3d9", "discussion 1", 10, 1, 10, 10, 1, false, false, null, null];
+        yield ['username1', "45eb17ea-e3f5-414a-adbc-b807705ab3d9", "discussion 1", 3, 1, 3, 10, 4, true, false, 2, null];
+        yield ['username1', "45eb17ea-e3f5-414a-adbc-b807705ab3d9", "discussion 1", 3, 3, 3, 10, 4, true, true, 4, 2];
+        yield ['username1', "45eb17ea-e3f5-414a-adbc-b807705ab3d9", "discussion 1", 3, 4, 1, 10, 4, false, true, null, 3];
     }
 
     public function testFailedValidation(): void
     {
         $this->expectException(ShowDiscussionForbiddenException::class);
         $this->requestFactory->create(
-            $this->userRepository->findOneByUsername('username10'),
-            "5142abe2-21e2-4363-ba31-d0271f94824e");
+            $this->userRepository->findOneByUsername('username3'),
+            "45eb17ea-e3f5-414a-adbc-b807705ab3d9");
     }
 
     public function testNotFoundValidation(): void
     {
         $this->expectException(DiscussionNotFoundException::class);
         $this->requestFactory->create(
-            $this->userRepository->findOneByUsername('username10'),
+            $this->userRepository->findOneByUsername('username3'),
             "5142abe3-21e2-4363-ba31-d0271f94824e");
     }
 

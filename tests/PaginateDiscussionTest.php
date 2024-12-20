@@ -2,8 +2,11 @@
 
 namespace Messenger\Domain\Tests;
 
+use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
+use Messenger\Domain\Entity\Message;
+use Messenger\Domain\Entity\UserInterface;
 use Messenger\Domain\Exception\PaginateDiscussionForbiddenException;
-use Messenger\Domain\Request\PaginateDiscussionRequest;
 use Messenger\Domain\RequestFactory\PaginateDiscussionRequestFactory;
 use Messenger\Domain\Response\PaginateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\PaginateDiscussionPresenterTest;
@@ -12,6 +15,7 @@ use Messenger\Domain\TestsIntegration\Adapter\Repository\UserRepository;
 use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\PaginateDiscussion;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
 class PaginateDiscussionTest extends TestCase
 {
@@ -20,11 +24,45 @@ class PaginateDiscussionTest extends TestCase
     private PaginateDiscussion $useCase;
     private PaginateDiscussionRequestFactory $requestFactory;
 
+    /**
+     * @return array{users: User[], discussions: Discussion[], members: Member[]}
+     */
+    private function getData(): array
+    {
+        $data = [
+            'users' => [],
+            'discussions' => [],
+            'members' => []
+        ];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $data['users'][] = new User("username$i@email.com", "username$i");
+        }
+
+        for ($i = 1; $i <= 10; $i++) {
+            $data['members'][] = new Member("username$i@email.com", "username$i", "username$i");
+        }
+
+        foreach ($data['members'] as $i => $m1) {
+            foreach ($data['members'] as $y => $m2) {
+                if ($i > $y) {
+                    continue;
+                }
+                $discussion = new Discussion(Uuid::v4(), "discussion $i/$y");
+                $discussion->addMember($m1);
+                $discussion->addMember($m2);
+                $data['discussions'][] = $discussion;
+            }
+        }
+        return $data;
+    }
+
     protected function setUp(): void
     {
+        $data = $this->getData();
         $this->presenter = new PaginateDiscussionPresenterTest();
-        $this->userRepository = new UserRepository();
-        $this->useCase = new PaginateDiscussion(new DiscussionRepository());
+        $this->userRepository = new UserRepository($data);
+        $this->useCase = new PaginateDiscussion(new DiscussionRepository($data));
         $this->requestFactory = new PaginateDiscussionRequestFactory();
     }
 

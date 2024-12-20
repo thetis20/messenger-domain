@@ -3,6 +3,7 @@
 namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Exception\DiscussionNotFoundException;
 use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
@@ -28,10 +29,30 @@ class SendMessageTest extends TestCase
 
     protected function setUp(): void
     {
+        /** @var array{users: User[], discussions:Discussion[], members: Member[], messages: Message[]} $data */
+        $data = [
+            'users' => [
+                new User('username1@email.com', 'username1'),
+                new User('username2@email.com', 'username2'),
+                new User('username3@email.com', 'username3')
+            ],
+            'discussions' => [
+                new Discussion(
+                    new Uuid("45eb17ea-e3f5-414a-adbc-b807705ab3d9"),
+                    "discussion 1")
+            ],
+            'members' => [
+                new Member('username1@email.com', 'username1', 'username1'),
+                new Member('username2@email.com', 'username2', 'username2'),
+            ],
+            'messages' => []
+        ];
+        $data['discussions'][0]->addMember($data['members'][0]);
+        $data['discussions'][0]->addMember($data['members'][1]);
         $this->presenter = new SendMessagePresenterTest();
-        $this->userGateway = new UserRepository();
-        $discussionGateway = new DiscussionRepository();
-        $this->useCase = new SendMessage(new MessageRepository(), $discussionGateway);
+        $this->userGateway = new UserRepository($data);
+        $discussionGateway = new DiscussionRepository($data);
+        $this->useCase = new SendMessage(new MessageRepository($data), $discussionGateway);
         $this->requestFactory = new SendMessageRequestFactory($discussionGateway);
     }
 
@@ -39,7 +60,7 @@ class SendMessageTest extends TestCase
     {
         $messageContent = "message content";
         $username = 'username1';
-        $discussionId = "8dada3a9-f7fa-488c-9657-c4caa3fc2a35";
+        $discussionId = "45eb17ea-e3f5-414a-adbc-b807705ab3d9";
         $request = $this->requestFactory->create(
             $this->userGateway->findOneByUsername($username),
             $discussionId,
@@ -84,8 +105,8 @@ class SendMessageTest extends TestCase
 
     public function provideFailedValidationRequestsData(): \Generator
     {
-        yield ["", "8dada3a9-f7fa-488c-9657-c4caa3fc2a35", 'username1', AssertionFailedException::class];
-        yield ["", "8dada3a9-f7fa-488c-9657-c4caa3fc2a35", 'username2', NotAMemberOfTheDiscussionException::class];
+        yield ["", "45eb17ea-e3f5-414a-adbc-b807705ab3d9", 'username1', AssertionFailedException::class];
+        yield ["", "45eb17ea-e3f5-414a-adbc-b807705ab3d9", 'username3', NotAMemberOfTheDiscussionException::class];
     }
 
     public function testForbidden(): void

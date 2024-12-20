@@ -3,9 +3,8 @@
 namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Entity\Discussion;
+use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Exception\CreateDiscussionForbiddenException;
-use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
-use Messenger\Domain\Request\CreateDiscussionRequest;
 use Messenger\Domain\RequestFactory\CreateDiscussionRequestFactory;
 use Messenger\Domain\Response\CreateDiscussionResponse;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\CreateDiscussionPresenterTest;
@@ -26,9 +25,17 @@ class CreateDiscussionTest extends TestCase
 
     protected function setUp(): void
     {
+        $data = [
+            'users' => [new User('username@email.com', 'username')],
+            'discussions' => [],
+            'members' => [
+                new Member('username@email.com', 'username', 'username'),
+                new Member('username1@email.com', 'username1', 'username1'),
+            ],
+        ];
         $this->presenter = new CreateDiscussionPresenterTest();
-        $this->userGateway = new UserRepository();
-        $this->useCase = new CreateDiscussion(new DiscussionRepository(), new MemberRepository());
+        $this->userGateway = new UserRepository($data);
+        $this->useCase = new CreateDiscussion(new DiscussionRepository($data), new MemberRepository($data));
         $this->requestFactory = new CreateDiscussionRequestFactory();
     }
 

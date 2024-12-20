@@ -33,7 +33,7 @@ interface DiscussionGateway
 
     /**
      * @param array{"discussionMembers.member.email"?: string} $filters
-     * @param array{limit?: int, page?: int} $options
+     * @param array{limit?: int, offset?: int} $options
      * @return Discussion[]
      */
     public function findBy(array $filters, array $options): array;
