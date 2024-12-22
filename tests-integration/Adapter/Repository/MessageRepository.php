@@ -7,6 +7,7 @@ use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Gateway\MessageGateway;
 use Messenger\Domain\TestsIntegration\Entity\User;
+use Symfony\Component\Uid\Uuid;
 
 class MessageRepository implements MessageGateway
 {
@@ -63,5 +64,24 @@ class MessageRepository implements MessageGateway
             }
         }
         return $messages;
+    }
+
+    public function update(Message $message): void
+    {
+        foreach ($this->data['messages'] as $key => $m) {
+            if ($m->getId()->toString() === $message->getId()->toString()) {
+                $this->data['messages'][$key] = $message;
+            }
+        }
+    }
+
+    public function find(string $id): ?Message
+    {
+        foreach ($this->data['messages'] as $message) {
+            if ($message->getId()->toString() === $id) {
+                return $message;
+            }
+        }
+        return null;
     }
 }

@@ -10,6 +10,7 @@ use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
 use Messenger\Domain\Exception\SendMessageForbiddenException;
 use Messenger\Domain\RequestFactory\SendMessageRequestFactory;
 use Messenger\Domain\Response\SendMessageResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Logger;
 use Messenger\Domain\TestsIntegration\Adapter\Mailer;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\SendMessagePresenterTest;
 use Messenger\Domain\TestsIntegration\Entity\User;
@@ -55,7 +56,7 @@ class SendMessageTest extends TestCase
         $this->userGateway = new UserRepository($data);
         $discussionGateway = new DiscussionRepository($data);
         $this->mailer = new Mailer();
-        $this->useCase = new SendMessage(new MessageRepository($data), $discussionGateway, $this->mailer);
+        $this->useCase = new SendMessage(new MessageRepository($data), $discussionGateway, $this->mailer, new Logger());
         $this->requestFactory = new SendMessageRequestFactory($discussionGateway);
     }
 
@@ -78,6 +79,7 @@ class SendMessageTest extends TestCase
         $this->assertEquals($discussionId, $this->presenter->response->getDiscussion()->getId()->toString());
         $this->assertInstanceOf(Uuid::class, $this->presenter->response->getMessage()->getId());
         $this->assertEquals((new \DateTime())->format('Y-m-d'), $this->presenter->response->getMessage()->getCreatedAt()->format('Y-m-d'));
+        $this->assertEquals((new \DateTime())->format('Y-m-d'), $this->presenter->response->getMessage()->getUpdatedAt()->format('Y-m-d'));
         $this->assertEquals($messageContent, $this->presenter->response->getMessage()->getMessage());
         $this->assertEquals($username, $this->presenter->response->getMessage()->getAuthor()->getUsername());
         $this->assertEquals($discussionId, $this->presenter->response->getMessage()->getDiscussionId());

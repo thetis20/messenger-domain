@@ -25,4 +25,17 @@ interface MessageGateway
      * @return Message[]
      */
     public function findBy(array $filters, array $options): array;
+
+    /**
+     * Update message
+     * @param Message $message
+     */
+    public function update(Message $message): void;
+
+    /**
+     * find one by id
+     * @param string $id
+     * @return Message|null
+     */
+    public function find(string $id): ?Message;
 }

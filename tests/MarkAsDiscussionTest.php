@@ -12,6 +12,7 @@ use Messenger\Domain\RequestFactory\MarkAsDiscussionRequestFactory;
 use Messenger\Domain\RequestFactory\SendMessageRequestFactory;
 use Messenger\Domain\Response\MarkAsDiscussionResponse;
 use Messenger\Domain\Response\SendMessageResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Logger;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\MarkAsDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\SendMessagePresenterTest;
 use Messenger\Domain\TestsIntegration\Entity\User;
@@ -52,7 +53,7 @@ class MarkAsDiscussionTest extends TestCase
         $data['discussions'][0]->addMember($data['members'][1]);
         $this->userGateway = new UserRepository($data);
         $discussionGateway = new DiscussionRepository($data);
-        $this->useCase = new MarkAsDiscussion($discussionGateway);
+        $this->useCase = new MarkAsDiscussion($discussionGateway, new Logger());
         $this->requestFactory = new MarkAsDiscussionRequestFactory($discussionGateway);
     }
 

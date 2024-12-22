@@ -4,6 +4,7 @@ namespace Messenger\Domain\UseCase;
 
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Gateway\DiscussionGateway;
+use Messenger\Domain\Gateway\LoggerInterface;
 use Messenger\Domain\Gateway\MessageGateway;
 use Messenger\Domain\Gateway\NotificationGateway;
 use Messenger\Domain\Presenter\SendMessagePresenterInterface;
@@ -16,7 +17,8 @@ final readonly class SendMessage
     public function __construct(
         private MessageGateway      $messageGateway,
         private DiscussionGateway   $discussionGateway,
-        private NotificationGateway $notificationGateway)
+        private NotificationGateway $notificationGateway,
+        private LoggerInterface     $logger)
     {
     }
 
@@ -42,5 +44,9 @@ final readonly class SendMessage
         $this->discussionGateway->update($discussion);
         $presenter->present(new SendMessageResponse($request->getDiscussion(), $message));
         $this->notificationGateway->closeTransaction();
+        $this->logger->notice('Send message to discussion', [
+            'discussion' => $discussion,
+            'user' => $request->getAuthor()->getEmail(),
+            'message' => $message]);
     }
 }

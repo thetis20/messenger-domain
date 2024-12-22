@@ -2,10 +2,9 @@
 
 namespace Messenger\Domain\Entity;
 
-use Messenger\Domain\Request\CreateDiscussionRequest;
 use Symfony\Component\Uid\Uuid;
 
-class Discussion
+class Discussion implements \JsonSerializable
 {
     /** @var Uuid */
     private Uuid $id;
@@ -106,5 +105,22 @@ class Discussion
         } else {
             $this->markAsUnseen($emails);
         }
+    }
+
+    /**
+     * @return array{id: string, name: string, discussionMembers: array{memberEmail: string, seen: bool}[]}
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id->__toString(),
+            'name' => $this->name,
+            'discussionMembers' => array_map(function (DiscussionMember $discussionMember) {
+                return [
+                    'memberEmail' => $discussionMember->getMember()->getEmail(),
+                    'seen' => $discussionMember->isSeen()
+                ];
+            }, $this->discussionMembers),
+        ];
     }
 }
