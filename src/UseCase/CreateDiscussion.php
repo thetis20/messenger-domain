@@ -3,9 +3,9 @@
 namespace Messenger\Domain\UseCase;
 
 use Messenger\Domain\Entity\Discussion;
-use Messenger\Domain\Entity\DiscussionMember;
 use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Gateway\DiscussionGateway;
+use Messenger\Domain\Gateway\LoggerInterface;
 use Messenger\Domain\Gateway\MemberGateway;
 use Messenger\Domain\Gateway\NotificationGateway;
 use Messenger\Domain\Presenter\CreateDiscussionPresenterInterface;
@@ -19,7 +19,8 @@ final readonly class CreateDiscussion
     public function __construct(
         private DiscussionGateway   $discussionGateway,
         private MemberGateway       $memberGateway,
-        private NotificationGateway $notificationGateway)
+        private NotificationGateway $notificationGateway,
+        private LoggerInterface     $logger)
     {
     }
 
@@ -57,6 +58,9 @@ final readonly class CreateDiscussion
 
         $this->discussionGateway->insert($discussion);
         $presenter->present(new CreateDiscussionResponse($discussion));
+        $this->logger->notice('Discussion created.', [
+            'discussion' => $discussion,
+            'user' => $request->getAuthor()->getEmail()]);
         $this->notificationGateway->closeTransaction();
     }
 }

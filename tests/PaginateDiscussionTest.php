@@ -4,8 +4,6 @@ namespace Messenger\Domain\Tests;
 
 use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\Member;
-use Messenger\Domain\Entity\Message;
-use Messenger\Domain\Entity\UserInterface;
 use Messenger\Domain\Exception\PaginateDiscussionForbiddenException;
 use Messenger\Domain\RequestFactory\PaginateDiscussionRequestFactory;
 use Messenger\Domain\Response\PaginateDiscussionResponse;
@@ -68,7 +66,7 @@ class PaginateDiscussionTest extends TestCase
 
     /**
      * @dataProvider provideSuccessfulValidationRequestsData
-     * @throws \Messenger\Domain\Exception\PaginateDiscussionForbiddenException
+     * @throws PaginateDiscussionForbiddenException
      */
     public function testSuccessful(
         string $username,

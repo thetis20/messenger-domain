@@ -7,6 +7,7 @@ use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Exception\CreateDiscussionForbiddenException;
 use Messenger\Domain\RequestFactory\CreateDiscussionRequestFactory;
 use Messenger\Domain\Response\CreateDiscussionResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Logger;
 use Messenger\Domain\TestsIntegration\Adapter\Mailer;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\CreateDiscussionPresenterTest;
 use Messenger\Domain\TestsIntegration\Adapter\Repository\MemberRepository;
@@ -38,7 +39,7 @@ class CreateDiscussionTest extends TestCase
         $this->mailer = new Mailer();
         $this->presenter = new CreateDiscussionPresenterTest();
         $this->userGateway = new UserRepository($data);
-        $this->useCase = new CreateDiscussion(new DiscussionRepository($data), new MemberRepository($data), $this->mailer);
+        $this->useCase = new CreateDiscussion(new DiscussionRepository($data), new MemberRepository($data), $this->mailer, new Logger());
         $this->requestFactory = new CreateDiscussionRequestFactory();
     }
 
@@ -70,7 +71,7 @@ class CreateDiscussionTest extends TestCase
         $this->assertEquals($this->presenter->response->getDiscussion(), $discussionMembers[1]->getDiscussion());
         $this->assertFalse($discussionMembers[1]->isSeen());
         $this->assertEquals('username2@email.com', $discussionMembers[2]->getMember()->getEmail());
-        $this->assertNull( $discussionMembers[2]->getMember()->getUserIdentifier());
+        $this->assertNull($discussionMembers[2]->getMember()->getUserIdentifier());
         $this->assertNull($discussionMembers[2]->getMember()->getUsername());
         $this->assertEquals($this->presenter->response->getDiscussion(), $discussionMembers[2]->getDiscussion());
         $this->assertFalse($discussionMembers[2]->isSeen());

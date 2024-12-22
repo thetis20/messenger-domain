@@ -6,7 +6,7 @@ use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\UserInterface;
 
-class MarkAsRequest
+class MarkAsDiscussionRequest
 {
     private bool $seen;
     private UserInterface $author;

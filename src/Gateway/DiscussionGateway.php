@@ -26,6 +26,7 @@ interface DiscussionGateway
     public function countBy(array $filters): int;
 
     /**
+     * find one by id
      * @param string $id
      * @return Discussion|null
      */

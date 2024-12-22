@@ -6,8 +6,6 @@ use Messenger\Domain\Entity\Discussion;
 use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Entity\Message;
 use Messenger\Domain\Exception\DiscussionNotFoundException;
-use Messenger\Domain\Exception\DiscussionNotSetException;
-use Messenger\Domain\Exception\SendMessageForbiddenException;
 use Messenger\Domain\Exception\ShowDiscussionForbiddenException;
 use Messenger\Domain\RequestFactory\ShowDiscussionRequestFactory;
 use Messenger\Domain\Response\ShowDiscussionResponse;
@@ -129,6 +127,9 @@ class ShowDiscussionTest extends TestCase
         yield ['username1', "45eb17ea-e3f5-414a-adbc-b807705ab3d9", "discussion 1", 3, 4, 1, 10, 4, false, true, null, 3];
     }
 
+    /**
+     * @throws DiscussionNotFoundException
+     */
     public function testFailedValidation(): void
     {
         $this->expectException(ShowDiscussionForbiddenException::class);
@@ -137,6 +138,9 @@ class ShowDiscussionTest extends TestCase
             "45eb17ea-e3f5-414a-adbc-b807705ab3d9");
     }
 
+    /**
+     * @throws ShowDiscussionForbiddenException
+     */
     public function testNotFoundValidation(): void
     {
         $this->expectException(DiscussionNotFoundException::class);
@@ -145,6 +149,9 @@ class ShowDiscussionTest extends TestCase
             "5142abe3-21e2-4363-ba31-d0271f94824e");
     }
 
+    /**
+     * @throws DiscussionNotFoundException
+     */
     public function testForbidden(): void
     {
         $this->expectException(ShowDiscussionForbiddenException::class);

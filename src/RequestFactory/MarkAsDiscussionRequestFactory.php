@@ -7,7 +7,7 @@ use Messenger\Domain\Exception\DiscussionNotFoundException;
 use Messenger\Domain\Exception\MarkAsDiscussionForbiddenException;
 use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
 use Messenger\Domain\Gateway\DiscussionGateway;
-use Messenger\Domain\Request\MarkAsRequest;
+use Messenger\Domain\Request\MarkAsDiscussionRequest;
 
 final readonly class MarkAsDiscussionRequestFactory
 {
@@ -19,12 +19,12 @@ final readonly class MarkAsDiscussionRequestFactory
      * @param UserInterface $author
      * @param string $discussionId
      * @param bool $seen
-     * @return MarkAsRequest
+     * @return MarkAsDiscussionRequest
      * @throws DiscussionNotFoundException
      * @throws MarkAsDiscussionForbiddenException
      * @throws NotAMemberOfTheDiscussionException
      */
-    public function create(UserInterface $author, string $discussionId, bool $seen = true): MarkAsRequest
+    public function create(UserInterface $author, string $discussionId, bool $seen = true): MarkAsDiscussionRequest
     {
         if (!in_array('ROLE_USER', $author->getRoles())) {
             throw new MarkAsDiscussionForbiddenException($author);
@@ -41,7 +41,7 @@ final readonly class MarkAsDiscussionRequestFactory
             throw new NotAMemberOfTheDiscussionException();
         }
 
-        return new MarkAsRequest($author, $discussion, $seen);
+        return new MarkAsDiscussionRequest($author, $discussion, $seen);
     }
 
 }
