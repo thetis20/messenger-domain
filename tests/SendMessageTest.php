@@ -10,6 +10,7 @@ use Messenger\Domain\Exception\NotAMemberOfTheDiscussionException;
 use Messenger\Domain\Exception\SendMessageForbiddenException;
 use Messenger\Domain\RequestFactory\SendMessageRequestFactory;
 use Messenger\Domain\Response\SendMessageResponse;
+use Messenger\Domain\TestsIntegration\Adapter\Mailer;
 use Messenger\Domain\TestsIntegration\Adapter\Presenter\SendMessagePresenterTest;
 use Messenger\Domain\TestsIntegration\Entity\User;
 use Messenger\Domain\UseCase\SendMessage;
@@ -26,6 +27,7 @@ class SendMessageTest extends TestCase
     private UserRepository $userGateway;
     private SendMessage $useCase;
     private SendMessageRequestFactory $requestFactory;
+    private Mailer $mailer;
 
     protected function setUp(): void
     {
@@ -52,7 +54,8 @@ class SendMessageTest extends TestCase
         $this->presenter = new SendMessagePresenterTest();
         $this->userGateway = new UserRepository($data);
         $discussionGateway = new DiscussionRepository($data);
-        $this->useCase = new SendMessage(new MessageRepository($data), $discussionGateway);
+        $this->mailer = new Mailer();
+        $this->useCase = new SendMessage(new MessageRepository($data), $discussionGateway, $this->mailer);
         $this->requestFactory = new SendMessageRequestFactory($discussionGateway);
     }
 
@@ -78,6 +81,13 @@ class SendMessageTest extends TestCase
         $this->assertEquals($messageContent, $this->presenter->response->getMessage()->getMessage());
         $this->assertEquals($username, $this->presenter->response->getMessage()->getAuthor()->getUsername());
         $this->assertEquals($discussionId, $this->presenter->response->getMessage()->getDiscussionId());
+
+        // mailer
+        $this->assertCount(1, $this->mailer->getSentNotifications());
+        $this->assertEquals('newMessage', $this->mailer->getSentNotifications()[0][0]);
+        $this->assertEquals('username2@email.com', $this->mailer->getSentNotifications()[0][1]);
+        $this->assertEquals($this->presenter->response->getDiscussion(), $this->mailer->getSentNotifications()[0][2]['discussion']);
+        $this->assertEquals($this->presenter->response->getMessage(), $this->mailer->getSentNotifications()[0][2]['message']);
     }
 
 

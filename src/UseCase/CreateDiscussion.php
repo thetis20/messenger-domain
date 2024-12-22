@@ -7,6 +7,7 @@ use Messenger\Domain\Entity\DiscussionMember;
 use Messenger\Domain\Entity\Member;
 use Messenger\Domain\Gateway\DiscussionGateway;
 use Messenger\Domain\Gateway\MemberGateway;
+use Messenger\Domain\Gateway\NotificationGateway;
 use Messenger\Domain\Presenter\CreateDiscussionPresenterInterface;
 use Messenger\Domain\Request\CreateDiscussionRequest;
 use Messenger\Domain\Response\CreateDiscussionResponse;
@@ -16,13 +17,15 @@ final readonly class CreateDiscussion
 {
 
     public function __construct(
-        private DiscussionGateway $discussionGateway,
-        private MemberGateway     $memberGateway)
+        private DiscussionGateway   $discussionGateway,
+        private MemberGateway       $memberGateway,
+        private NotificationGateway $notificationGateway)
     {
     }
 
     public function execute(CreateDiscussionRequest $request, CreateDiscussionPresenterInterface $presenter): void
     {
+        $this->notificationGateway->beginTransaction();
         $discussion = new Discussion(Uuid::v4(), $request->getName());
 
         $authorMember = $this->memberGateway->findOneByEmail($request->getAuthor()->getEmail());
@@ -40,11 +43,20 @@ final readonly class CreateDiscussion
             if (!$member) {
                 $member = new Member($ref);
                 $this->memberGateway->insert($member);
+                $this->notificationGateway->send('invitesDiscussion', $member->getEmail(), [
+                    'member' => $member,
+                    'discussion' => $discussion]);
+                $discussion->addMember($member);
+                continue;
             }
             $discussion->addMember($member);
+            $this->notificationGateway->send('invitesMemberDiscussion', $member->getEmail(), [
+                'member' => $member,
+                'discussion' => $discussion]);
         }
 
         $this->discussionGateway->insert($discussion);
         $presenter->present(new CreateDiscussionResponse($discussion));
+        $this->notificationGateway->closeTransaction();
     }
 }
