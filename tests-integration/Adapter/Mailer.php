@@ -6,19 +6,20 @@ use Messenger\Domain\Gateway\NotificationGateway;
 
 class Mailer extends NotificationGateway
 {
-    private $sentNotifications = [];
+    /** @var array<string|array<string|mixed>>[] */
+    private array $sentNotifications = [];
 
-    public function invitesDiscussion(string $email, array $params = []): void
+    public function invitesDiscussion(string $email, array $params): void
     {
         $this->sentNotifications[] = ['invitesDiscussion', $email, $params];
     }
 
-    public function invitesMemberDiscussion(string $email, array $params = []): void
+    public function invitesMemberDiscussion(string $email, array $params): void
     {
         $this->sentNotifications[] = ['invitesMemberDiscussion', $email, $params];
     }
 
-    public function newMessage(string $email, array $params = []): void
+    public function newMessage(string $email, array $params): void
     {
         $this->sentNotifications[] = ['newMessage', $email, $params];
     }

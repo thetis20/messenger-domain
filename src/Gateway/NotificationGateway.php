@@ -12,10 +12,9 @@ use ReflectionMethod;
 
 abstract class NotificationGateway
 {
+    /** @var array<string|array<string|mixed>>[] */
     private array $notifications = [];
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     private array $keys;
 
     public function __construct()
@@ -49,27 +48,28 @@ abstract class NotificationGateway
      * @param array{discussion: Discussion, member: Member} $params
      * @return void
      */
-    abstract public function invitesDiscussion(string $email, array $params = []): void;
+    abstract public function invitesDiscussion(string $email, array $params): void;
 
     /**
      * @param string $email
      * @param array{discussion: Discussion, member: Member} $params
      * @return void
      */
-    abstract public function invitesMemberDiscussion(string $email, array $params = []): void;
+    abstract public function invitesMemberDiscussion(string $email, array $params): void;
 
     /**
      * @param string $email
      * @param array{discussion: Discussion, member: Member, message: Message} $params
      * @return void
      */
-    abstract public function newMessage(string $email, array $params = []): void;
+    abstract public function newMessage(string $email, array $params): void;
 
 
     /**
+     * @param array<string, mixed> $params
      * @throws NotificationDoesNotExistException
      */
-    public function send(string $key, string $email, array $params = []): void
+    public function send(string $key, string $email, array $params): void
     {
         if (!in_array($key, $this->keys)) {
             // @codeCoverageIgnoreStart
