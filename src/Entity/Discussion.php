@@ -6,23 +6,23 @@ use Symfony\Component\Uid\Uuid;
 
 class Discussion implements \JsonSerializable
 {
-    /** @var Uuid */
     private Uuid $id;
-    /** @var string */
     private string $name;
     /** @var DiscussionMember[] */
     private array $discussionMembers;
+    private Member $author;
 
-    /**
-     * @param Uuid $id
-     * @param string $name
-     * @param DiscussionMember[] $discussionMembers
-     */
-    public function __construct(Uuid $id, string $name, array $discussionMembers = [])
+    public function __construct(Member $author, Uuid $id, string $name)
     {
+        $this->author = $author;
         $this->id = $id;
         $this->name = $name;
-        $this->discussionMembers = $discussionMembers;
+        $this->discussionMembers = [new DiscussionMember($this, $author, true)];
+    }
+
+    public function getAuthor(): Member
+    {
+        return $this->author;
     }
 
     public function getId(): Uuid

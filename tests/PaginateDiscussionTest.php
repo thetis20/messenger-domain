@@ -46,8 +46,7 @@ class PaginateDiscussionTest extends TestCase
                 if ($i > $y) {
                     continue;
                 }
-                $discussion = new Discussion(Uuid::v4(), "discussion $i/$y");
-                $discussion->addMember($m1);
+                $discussion = new Discussion($m1, Uuid::v4(), "discussion $i/$y");
                 $discussion->addMember($m2);
                 $data['discussions'][] = $discussion;
             }

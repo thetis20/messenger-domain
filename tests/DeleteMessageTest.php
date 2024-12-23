@@ -32,18 +32,18 @@ class DeleteMessageTest extends TestCase
                 new User('username2@email.com', 'username2'),
                 new User('username3@email.com', 'username3')
             ],
-            'discussions' => [
-                new Discussion(
-                    new Uuid("72b0b1a3-cf8c-4058-b526-4566acd49377"),
-                    "discussion 1")
-            ],
             'members' => [
                 new Member('username1@email.com', 'username1', 'username1'),
                 new Member('username2@email.com', 'username2', 'username2'),
             ],
             'messages' => []
         ];
-        $data['discussions'][0]->addMember($data['members'][0]);
+        $data['discussions'] = [
+            new Discussion(
+                $data['members'][0],
+                new Uuid("72b0b1a3-cf8c-4058-b526-4566acd49377"),
+                "discussion 1")
+        ];
         $data['discussions'][0]->addMember($data['members'][1]);
         $data['messages'][] = new Message(
             new Uuid('29771b87-5a17-4c4e-ab37-e815516dce73'),

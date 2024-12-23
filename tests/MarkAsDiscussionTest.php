@@ -39,17 +39,17 @@ class MarkAsDiscussionTest extends TestCase
                 new User('username2@email.com', 'username2'),
                 new User('username3@email.com', 'username3')
                 ],
-            'discussions' => [
-                new Discussion(
-                    new Uuid("45eb17ea-e3f5-414a-adbc-b807705ab3d9"),
-                    "discussion 1")
-            ],
             'members' => [
                 new Member('username1@email.com', 'username1', 'username1'),
                 new Member('username2@email.com', 'username2', 'username2'),
             ]
         ];
-        $data['discussions'][0]->addMember($data['members'][0]);
+        $data['discussions'] = [
+            new Discussion(
+                $data['members'][0],
+                new Uuid("45eb17ea-e3f5-414a-adbc-b807705ab3d9"),
+                "discussion 1")
+        ];
         $data['discussions'][0]->addMember($data['members'][1]);
         $this->userGateway = new UserRepository($data);
         $discussionGateway = new DiscussionRepository($data);

@@ -27,7 +27,6 @@ final readonly class CreateDiscussion
     public function execute(CreateDiscussionRequest $request, CreateDiscussionPresenterInterface $presenter): void
     {
         $this->notificationGateway->beginTransaction();
-        $discussion = new Discussion(Uuid::v4(), $request->getName());
 
         $authorMember = $this->memberGateway->findOneByEmail($request->getAuthor()->getEmail());
         if (!$authorMember) {
@@ -37,7 +36,8 @@ final readonly class CreateDiscussion
                 $request->getAuthor()->getUsualName());
             $this->memberGateway->insert($authorMember);
         }
-        $discussion->addMember($authorMember, true);
+
+        $discussion = new Discussion($authorMember, Uuid::v4(), $request->getName());
 
         foreach ($request->getEmails() as $ref) {
             $member = $this->memberGateway->findOneByEmail($ref);
