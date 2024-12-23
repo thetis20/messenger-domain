@@ -87,6 +87,8 @@ classDiagram
       +addMember(Member member, bool seen): void
       +markAsUnseen(?array emails = null): void
       +markAsSeen(?array emails = null): void
+      +markAs(bool seen, ?array emails = null): void
+      +jsonSerialize(): array
    }
    class DiscussionMember {
       -bool seen
@@ -106,14 +108,21 @@ classDiagram
    }
    class Message {
       -Uuid id
+      -Uuid discussionId
       -Member author
-      -string Message
+      -?string Message
       -DateTime createdAt
+      -DateTime updatedAt
+      -bool deleted
       +getId(): Uuid
       +getAuthor(): Member
-      +getMessage(): string
+      +getMessage(): ?string
       +getCreatedAt(): DateTime
-      +getDiscusion(?array options): ?Discussion
+      +getUpdatedAt(): DateTime
+      +isDeleted(): bool
+      +getDiscusionId(): Uuid
+      +jsonSerialize(): array
+      +delete(): Message
    }
 
 ```
@@ -166,18 +175,6 @@ flowchart TD
     B --> C[Confirm deletion]
     C -->|Confirmed| D[Delete the message]
     C -->|Not confirmed| E[Cancel deletion]
-```
-
-### Editing Messages
-A user can edit a message they have sent.
-
-```mermaid
-flowchart TD
-    A[User] --> B[Select a message to edit]
-    B --> C[Enter new message]
-    C --> D[Confirm edit]
-    D -->|Confirmed| E[Update the message]
-    D -->|Not confirmed| F[Cancel edit]
 ```
 
 ## License
